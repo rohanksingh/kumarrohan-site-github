@@ -1,8 +1,11 @@
+import Navbar from "@/components/Navbar";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white px-6 py-12">
-      <div className="max-w-4xl mx-auto">
+      <Navbar />
 
+      <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold mb-4">Rohan Kumar</h1>
 
         <p className="text-xl text-gray-400 mb-8">
@@ -13,8 +16,7 @@ export default function Home() {
           I build data-driven risk, compliance, and governance solutions for financial institutions.
         </p>
 
-        {/* Research */}
-        <div className="mb-10">
+        <div id="research" className="mb-10">
           <h2 className="text-2xl font-semibold mb-3">Research</h2>
           <ul className="space-y-2 text-gray-300">
             <li>
@@ -35,8 +37,7 @@ export default function Home() {
           </ul>
         </div>
 
-        {/* Projects */}
-        <div className="mb-10">
+        <div id="projects" className="mb-10">
           <h2 className="text-2xl font-semibold mb-3">Projects</h2>
           <ul className="space-y-2 text-gray-300">
             <li>
@@ -45,7 +46,7 @@ export default function Home() {
               </a>
             </li>
             <li>
-              <a href="https://github.com/rohanksingh/credit-risk-platform" target="_blank" className="underline">
+              <a href="https://github.com/YOUR_USERNAME/credit-risk-platform" target="_blank" className="underline">
                 Credit Risk Modeling Platform
               </a>
             </li>
@@ -57,14 +58,22 @@ export default function Home() {
           </ul>
         </div>
 
-        {/* Contact */}
-        <div>
+        <div id="contact">
           <h2 className="text-2xl font-semibold mb-3">Contact</h2>
-          <p className="text-gray-300">
-            Add your LinkedIn, GitHub, and email here.
-          </p>
+          <div className="space-y-2 text-gray-300">
+            <a href="https://www.linkedin.com/in/rohanksingh/" target="_blank" className="underline">
+              LinkedIn
+            </a>
+            <br />
+            <a href="https://github.com/rohanksingh" target="_blank" className="underline">
+              GitHub
+            </a>
+            <br />
+            <a href="mailto:rohandhn@email.com" className="underline">
+              Email
+            </a>
+          </div>
         </div>
-
       </div>
     </main>
   );
