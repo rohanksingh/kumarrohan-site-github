@@ -69,7 +69,7 @@ export default function Home() {
               GitHub
             </a>
             <br />
-            <a href="mailto:rohandhn@email.com" className="underline">
+            <a href="mailto:rohandhn@gmail.com" className="underline">
               Email
             </a>
           </div>
