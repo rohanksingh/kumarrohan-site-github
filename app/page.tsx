@@ -20,6 +20,13 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-3">Research</h2>
           <ul className="space-y-2 text-gray-300">
             <li>
+              <a
+                href="/resume/Rohan_Kumar_Resume.pdf"
+                target="_blank"
+                className="inline-block mt-4 border border-gray-700 px-4 py-2 rounded hover:bg-gray-800"
+              >
+                Download Resume
+              </a>
               <a href="/research/trade-surveillance-whitepaper.pdf" target="_blank" className="underline">
                 Trade Surveillance Whitepaper
               </a>
