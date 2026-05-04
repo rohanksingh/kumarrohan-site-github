@@ -52,12 +52,12 @@ export default function Home() {
             </li>
             <li>
               <a href="https://github.com/rohanksingh/ppnr-risk-platform" target="_blank" className="underline">
-                Credit Risk Modeling Platform
+                PPNR-CCAR Risk Modeling Platform
               </a>
             </li>
             <li>
               <a href="https://github.com/rohanksingh/Enterprise-data-platform-pipeline" target="_blank" className="underline">
-                Credit Risk Modeling Platform
+                Data Modeling Platform
               </a>
             </li>
             <li>
