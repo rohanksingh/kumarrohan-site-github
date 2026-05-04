@@ -46,7 +46,17 @@ export default function Home() {
               </a>
             </li>
             <li>
-              <a href="https://github.com/YOUR_USERNAME/credit-risk-platform" target="_blank" className="underline">
+              <a href="https://github.com/rohanksingh/credit-risk-platform" target="_blank" className="underline">
+                Credit Risk Modeling Platform
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/rohanksingh/ppnr-risk-platform" target="_blank" className="underline">
+                Credit Risk Modeling Platform
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/rohanksingh/Enterprise-data-platform-pipeline" target="_blank" className="underline">
                 Credit Risk Modeling Platform
               </a>
             </li>
