@@ -21,6 +21,27 @@ const researchItems = [
   },
 ];
 
+const blogPosts = [
+  {
+    title: "How AI Is Changing Trade Surveillance",
+    description:
+      "Thoughts on LLMs, alert triage, market abuse detection, and explainable surveillance workflows.",
+    link: "/blog/ai-trade-surveillance",
+  },
+  {
+    title: "Credit Risk Modeling with Python",
+    description:
+      "PD, LGD, EAD, stress scenarios, and model monitoring explained from a practical banking perspective.",
+    link: "/blog/credit-risk-python",
+  },
+  {
+    title: "Market Risk, PnL, and DV01",
+    description:
+      "A practical explanation of risk measures used in FICC trading and risk reporting.",
+    link: "/blog/market-risk-dv01",
+  },
+];
+
 const projects = [
   {
     title: "Agentic Trade Surveillance System",
@@ -127,6 +148,24 @@ export default function Home() {
         </div>
       </section>
 
+<section id="blog" className="max-w-5xl mx-auto mb-16">
+  <h2 className="text-3xl font-bold mb-6">Blog & Insights</h2>
+
+  <div className="grid md:grid-cols-3 gap-5">
+    {blogPosts.map((post) => (
+      <a
+        key={post.title}
+        href={post.link}
+        className="block rounded-xl border border-gray-800 bg-gray-900/70 p-5 hover:border-blue-400 hover:-translate-y-1 transition"
+      >
+        <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
+        <p className="text-sm text-gray-400 mb-4">{post.description}</p>
+        <span className="text-sm underline text-blue-300">Read More →</span>
+      </a>
+    ))}
+  </div>
+</section>
+
       <section
         id="contact"
         className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
@@ -149,15 +188,52 @@ export default function Home() {
           >
             GitHub
           </a>
-
-          <a
-            href="mailto:rohandhn@gmail.com"
-            className="underline hover:text-white"
-          >
-            Email
-          </a>
         </div>
       </section>
+
+<section
+  id="contact"
+  className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
+>
+  <h2 className="text-3xl font-bold mb-4">Contact</h2>
+
+  <form
+    action="https://formspree.io/f/YOUR_FORM_ID"
+    method="POST"
+    className="grid gap-4 max-w-2xl"
+  >
+    <input
+      type="text"
+      name="name"
+      placeholder="Your name"
+      required
+      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
+    />
+
+    <input
+      type="email"
+      name="email"
+      placeholder="Your email"
+      required
+      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
+    />
+
+    <textarea
+      name="message"
+      placeholder="Your message"
+      required
+      rows={5}
+      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
+    />
+
+    <button
+      type="submit"
+      className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 w-fit"
+    >
+      Send Message
+    </button>
+  </form>
+</section>
     </main>
   );
 }
