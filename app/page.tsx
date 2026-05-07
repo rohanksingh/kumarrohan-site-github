@@ -198,7 +198,7 @@ export default function Home() {
   <h2 className="text-3xl font-bold mb-4">Contact</h2>
 
   <form
-    action="https://formspree.io/f/YOUR_FORM_ID"
+    action="https://formspree.io/f/mpqblgbn"  
     method="POST"
     className="grid gap-4 max-w-2xl"
   >
