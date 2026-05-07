@@ -1,19 +1,46 @@
+import Link from "next/link";
+
 export default function Navbar() {
   return (
     <nav className="w-full border-b border-gray-800 mb-10">
-      <div className="max-w-4xl mx-auto flex justify-between py-4 px-2 text-sm text-gray-300">
-        <div className="font-semibold">Rohan Kumar</div>
+      <div className="max-w-4xl mx-auto flex justify-between items-center py-4 px-2 text-sm text-gray-300">
 
-        <div className="space-x-4">
-          <a href="#research" className="hover:text-white">
+        {/* Logo / Name */}
+        <Link href="/" className="font-semibold text-white">
+          Rohan Kumar
+        </Link>
+
+        {/* Navigation Links */}
+        <div className="flex flex-wrap gap-4">
+
+          <Link href="/" className="hover:text-white transition">
+            Home
+          </Link>
+
+          <Link href="/research" className="hover:text-white transition">
             Research
-          </a>
-          <a href="#projects" className="hover:text-white">
+          </Link>
+
+          <Link href="/projects" className="hover:text-white transition">
             Projects
-          </a>
-          <a href="#contact" className="hover:text-white">
+          </Link>
+
+          <Link href="/blog" className="hover:text-white transition">
+            Blog
+          </Link>
+
+          <Link href="/market-insights" className="hover:text-white transition">
+            Market Insights
+          </Link>
+
+          <Link href="/ai-news-radar" className="hover:text-white transition">
+            AI News Radar
+          </Link>
+
+          <Link href="/contact" className="hover:text-white transition">
             Contact
-          </a>
+          </Link>
+
         </div>
       </div>
     </nav>
