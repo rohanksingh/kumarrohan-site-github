@@ -69,6 +69,42 @@ const projects = [
   },
 ];
 
+const marketInsights = [
+  {
+    title: "Rates & Credit Risk",
+    insight:
+      "Higher-for-longer rates continue to pressure funding costs, credit spreads, and borrower affordability.",
+  },
+  {
+    title: "Banking & Risk Analytics",
+    insight:
+      "Banks are investing in better risk data pipelines, stress testing, and model governance controls.",
+  },
+  {
+    title: "Trade Surveillance",
+    insight:
+      "Surveillance teams are moving toward explainable alerts, anomaly detection, and AI-assisted investigation.",
+  },
+];
+
+const aiNewsRadar = [
+  {
+    title: "AI Governance",
+    insight:
+      "Financial institutions are increasing focus on AI model validation, explainability, and compliance monitoring.",
+  },
+  {
+    title: "LLMs in Banking",
+    insight:
+      "LLMs are being tested for document review, alert triage, research summaries, and operational automation.",
+  },
+  {
+    title: "Jobs Signal",
+    insight:
+      "Python, data engineering, model risk, and AI governance skills are becoming more connected.",
+  },
+];
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white px-6 py-10">
@@ -166,6 +202,38 @@ export default function Home() {
   </div>
 </section>
 
+<section id="market-insights" className="max-w-5xl mx-auto mb-16">
+  <h2 className="text-3xl font-bold mb-6">Personal Market Insights</h2>
+
+  <div className="grid md:grid-cols-3 gap-5">
+    {marketInsights.map((item) => (
+      <div
+        key={item.title}
+        className="rounded-xl border border-gray-800 bg-gray-900/70 p-5"
+      >
+        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+        <p className="text-sm text-gray-400">{item.insight}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section id="ai-news-radar" className="max-w-5xl mx-auto mb-16">
+  <h2 className="text-3xl font-bold mb-6">AI News Radar</h2>
+
+  <div className="grid md:grid-cols-3 gap-5">
+    {aiNewsRadar.map((item) => (
+      <div
+        key={item.title}
+        className="rounded-xl border border-gray-800 bg-gray-900/70 p-5"
+      >
+        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+        <p className="text-sm text-gray-400">{item.insight}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
       <section
         id="contact"
         className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
@@ -192,7 +260,7 @@ export default function Home() {
       </section>
 
 <section
-  id="contact"
+  id="message me "
   className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
 >
   <h2 className="text-3xl font-bold mb-4">Contact</h2>
