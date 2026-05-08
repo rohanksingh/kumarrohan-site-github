@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 // app/market-insights/page.tsx already has this:
-import { marketInsights, lastUpdated } from "@/data/market-insights";
+// import { marketInsights, lastUpdated } from "@/data/market-insights";
 
 
 const insights = [

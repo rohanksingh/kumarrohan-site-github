@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 
 // app/ai-news-radar/page.tsx already has this:
-import { radarItems1, lastUpdated } from "@/data/ai-news-radar";
+// import { radarItems1, lastUpdated } from "@/data/ai-news-radar";
 
 const radarItems = [
   {
