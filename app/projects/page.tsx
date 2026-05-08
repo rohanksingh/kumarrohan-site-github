@@ -5,21 +5,21 @@ const projects = [
     title: "Agentic Trade Surveillance System",
     description:
       "LLM-driven surveillance workflow for detecting wash trades, spoofing, and suspicious trading patterns. Uses agentic reasoning to triage alerts and generate explainable findings.",
-    link: "https://github.com/rohanksingh/agentic-trade-surveillance",
+    link: "https://github.com/rohanksingh/AIAgent",
     tags: ["Python", "LLM", "Trade Surveillance"],
   },
   {
     title: "Credit Risk Modeling Platform",
     description:
       "End-to-end PD modeling platform with feature engineering, stress scenarios, and model monitoring for credit risk analytics aligned with regulatory expectations.",
-    link: "https://github.com/rohanksingh/credit-risk-platform",
+    link: "https://github.com/rohanksingh/creditrisk",
     tags: ["Python", "Scikit-learn", "Credit Risk"],
   },
   {
     title: "PPNR / CCAR Risk Modeling Platform",
     description:
       "Scenario-based risk platform for stress testing, revenue projection, and CCAR-style analytics. Supports macro scenario overlays and model-based forecasting.",
-    link: "https://github.com/rohanksingh/ppnr-risk-platform",
+    link: "https://github.com/rohanksingh/ccar",
     tags: ["Python", "CCAR", "Stress Testing"],
   },
   {
