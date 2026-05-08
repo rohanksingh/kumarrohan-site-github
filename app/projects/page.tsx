@@ -5,7 +5,7 @@ const projects = [
     title: "Agentic Trade Surveillance System",
     description:
       "LLM-driven surveillance workflow for detecting wash trades, spoofing, and suspicious trading patterns. Uses agentic reasoning to triage alerts and generate explainable findings.",
-    link: "https://github.com/rohanksingh/AIAgent",
+    link: "https://github.com/rohanksingh/AIAgent/",
     tags: ["Python", "LLM", "Trade Surveillance"],
   },
   {
