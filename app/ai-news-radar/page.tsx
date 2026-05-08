@@ -1,307 +1,82 @@
 import Navbar from "@/components/Navbar";
 
-const researchItems = [
+const radarItems = [
   {
-    title: "Trade Surveillance Whitepaper",
-    description:
-      "Framework for detecting market abuse using surveillance rules, analytics, and explainable alerting.",
-    link: "/research/trade-surveillance-whitepaper.pdf",
+    title: "AI Governance in Financial Services",
+    detail:
+      "Financial institutions are increasing focus on AI model validation, explainability, and compliance monitoring. Regulators in the US and EU are issuing guidance on responsible AI use in banking.",
+    category: "Governance",
   },
   {
-    title: "Model Governance & AI Risk",
-    description:
-      "Research on model risk controls, AI governance, validation, and monitoring aligned with financial services expectations.",
-    link: "/research/model-governance-ai-risk.pdf",
+    title: "LLMs in Banking Operations",
+    detail:
+      "LLMs are being piloted for document review, alert triage, research summarization, and operational automation. Early deployments show promise in reducing manual workload in compliance and risk functions.",
+    category: "LLMs",
   },
   {
-    title: "SSRN Publication",
-    description:
-      "Published research work covering analytics, risk, and governance topics.",
-    link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6576018",
-  },
-];
-
-const blogPosts = [
-  {
-    title: "How AI Is Changing Trade Surveillance",
-    description:
-      "Thoughts on LLMs, alert triage, market abuse detection, and explainable surveillance workflows.",
-    link: "/blog/ai-trade-surveillance",
+    title: "Agentic AI for Surveillance",
+    detail:
+      "Agentic AI workflows are emerging as a tool for trade surveillance — reasoning through alert patterns, pulling context, and generating explainable summaries for human reviewers.",
+    category: "Trade Surveillance",
   },
   {
-    title: "Credit Risk Modeling with Python",
-    description:
-      "PD, LGD, EAD, stress scenarios, and model monitoring explained from a practical banking perspective.",
-    link: "/blog/credit-risk-python",
+    title: "Skills Signal: What's in Demand",
+    detail:
+      "Python, data engineering, model risk management, and AI governance skills are converging. Roles at the intersection of quantitative finance, compliance, and ML are growing rapidly.",
+    category: "Jobs & Skills",
   },
   {
-    title: "Market Risk, PnL, and DV01",
-    description:
-      "A practical explanation of risk measures used in FICC trading and risk reporting.",
-    link: "/blog/market-risk-dv01",
+    title: "Model Risk Management (MRM) + AI",
+    detail:
+      "Traditional MRM frameworks are being extended to cover AI and ML models. SR 11-7 guidance is being revisited in light of generative AI, and banks are building new validation playbooks.",
+    category: "Model Risk",
+  },
+  {
+    title: "Synthetic Data for Risk Modeling",
+    detail:
+      "Synthetic data generation is gaining traction as a way to train and test risk models while preserving privacy. Applications in credit risk, fraud detection, and stress testing are expanding.",
+    category: "Data",
   },
 ];
 
-const projects = [
-  {
-    title: "Agentic Trade Surveillance System",
-    description:
-      "LLM-driven surveillance workflow for detecting wash trades, spoofing, and suspicious trading patterns.",
-    link: "https://github.com/rohanksingh/agentic-trade-surveillance",
-  },
-  {
-    title: "Credit Risk Modeling Platform",
-    description:
-      "PD modeling, feature engineering, stress scenarios, and model monitoring for credit risk analytics.",
-    link: "https://github.com/rohanksingh/credit-risk-platform",
-  },
-  {
-    title: "PPNR / CCAR Risk Modeling Platform",
-    description:
-      "Scenario-based risk platform for stress testing, revenue projection, and CCAR-style analytics.",
-    link: "https://github.com/rohanksingh/ppnr-risk-platform",
-  },
-  {
-    title: "Enterprise Data Platform Pipeline",
-    description:
-      "End-to-end data pipeline with bronze, silver, gold layers, validation, reconciliation, and analytics output.",
-    link: "https://github.com/rohanksingh/Enterprise-data-platform-pipeline",
-  },
-];
-
-const marketInsights = [
-  {
-    title: "Rates & Credit Risk",
-    insight:
-      "Higher-for-longer rates continue to pressure funding costs, credit spreads, and borrower affordability.",
-  },
-  {
-    title: "Banking & Risk Analytics",
-    insight:
-      "Banks are investing in better risk data pipelines, stress testing, and model governance controls.",
-  },
-  {
-    title: "Trade Surveillance",
-    insight:
-      "Surveillance teams are moving toward explainable alerts, anomaly detection, and AI-assisted investigation.",
-  },
-];
-
-const aiNewsRadar = [
-  {
-    title: "AI Governance",
-    insight:
-      "Financial institutions are increasing focus on AI model validation, explainability, and compliance monitoring.",
-  },
-  {
-    title: "LLMs in Banking",
-    insight:
-      "LLMs are being tested for document review, alert triage, research summaries, and operational automation.",
-  },
-  {
-    title: "Jobs Signal",
-    insight:
-      "Python, data engineering, model risk, and AI governance skills are becoming more connected.",
-  },
-];
-
-export default function Home() {
+export default function AINewsRadarPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white px-6 py-10">
       <Navbar />
 
-      <section className="max-w-5xl mx-auto pt-12 pb-16">
-        <p className="text-sm uppercase tracking-widest text-blue-400 mb-4">
-          Risk Analytics • Trade Surveillance • AI Governance
+      <section className="max-w-5xl mx-auto pt-12 pb-10">
+        <p className="text-sm uppercase tracking-widest text-blue-400 mb-3">
+          Tracking AI in Finance
         </p>
-
-        <h1 className="text-5xl md:text-6xl font-bold mb-5">
-          Rohan Kumar
-        </h1>
-
-        <p className="text-xl text-gray-300 max-w-3xl mb-6">
-          I build data-driven risk, compliance, and governance solutions for
-          financial institutions using Python, SQL, cloud platforms, and AI-enabled analytics.
+        <h1 className="text-5xl font-bold mb-4">AI News Radar</h1>
+        <p className="text-gray-300 max-w-3xl">
+          Tracking how artificial intelligence, LLMs, and agentic systems are
+          reshaping risk analytics, compliance, and financial services operations.
         </p>
-
-        <div className="flex flex-wrap gap-4">
-          <a
-            href="/resume/Rohan_Kumar_Resume.pdf"
-            target="_blank"
-            className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200"
-          >
-            Download Resume
-          </a>
-
-          <a
-            href="https://github.com/rohanksingh"
-            target="_blank"
-            className="rounded-lg border border-gray-700 px-5 py-3 font-semibold hover:bg-gray-900"
-          >
-            View GitHub
-          </a>
-        </div>
       </section>
 
-      <section id="research" className="max-w-5xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold mb-6">Research</h2>
-
-        <div className="grid md:grid-cols-3 gap-5">
-          {researchItems.map((item) => (
-            <a
+      <section className="max-w-5xl mx-auto mb-16">
+        <div className="grid md:grid-cols-2 gap-6">
+          {radarItems.map((item) => (
+            <div
               key={item.title}
-              href={item.link}
-              target="_blank"
-              className="block rounded-xl border border-gray-800 bg-gray-900/70 p-5 hover:border-blue-400 hover:-translate-y-1 transition"
+              className="rounded-xl border border-gray-800 bg-gray-900/70 p-6"
             >
-              <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-400">{item.description}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section id="projects" className="max-w-5xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold mb-6">Projects</h2>
-
-        <div className="grid md:grid-cols-2 gap-5">
-          {projects.map((project) => (
-            <a
-              key={project.title}
-              href={project.link}
-              target="_blank"
-              className="block rounded-xl border border-gray-800 bg-gray-900/70 p-6 hover:border-blue-400 hover:-translate-y-1 transition"
-            >
-              <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-              <p className="text-sm text-gray-400 mb-4">
-                {project.description}
-              </p>
-              <span className="text-sm underline text-blue-300">
-                View Project →
+              <span className="inline-block text-xs font-semibold uppercase tracking-wider text-blue-400 mb-3">
+                {item.category}
               </span>
-            </a>
+              <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+              <p className="text-sm text-gray-400">{item.detail}</p>
+            </div>
           ))}
         </div>
       </section>
 
-<section id="blog" className="max-w-5xl mx-auto mb-16">
-  <h2 className="text-3xl font-bold mb-6">Blog & Insights</h2>
-
-  <div className="grid md:grid-cols-3 gap-5">
-    {blogPosts.map((post) => (
-      <a
-        key={post.title}
-        href={post.link}
-        className="block rounded-xl border border-gray-800 bg-gray-900/70 p-5 hover:border-blue-400 hover:-translate-y-1 transition"
-      >
-        <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
-        <p className="text-sm text-gray-400 mb-4">{post.description}</p>
-        <span className="text-sm underline text-blue-300">Read More →</span>
-      </a>
-    ))}
-  </div>
-</section>
-
-<section id="market-insights" className="max-w-5xl mx-auto mb-16">
-  <h2 className="text-3xl font-bold mb-6">Personal Market Insights</h2>
-
-  <div className="grid md:grid-cols-3 gap-5">
-    {marketInsights.map((item) => (
-      <div
-        key={item.title}
-        className="rounded-xl border border-gray-800 bg-gray-900/70 p-5"
-      >
-        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-        <p className="text-sm text-gray-400">{item.insight}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-<section id="ai-news-radar" className="max-w-5xl mx-auto mb-16">
-  <h2 className="text-3xl font-bold mb-6">AI News Radar</h2>
-
-  <div className="grid md:grid-cols-3 gap-5">
-    {aiNewsRadar.map((item) => (
-      <div
-        key={item.title}
-        className="rounded-xl border border-gray-800 bg-gray-900/70 p-5"
-      >
-        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-        <p className="text-sm text-gray-400">{item.insight}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-      <section
-        id="contact"
-        className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
-      >
-        <h2 className="text-3xl font-bold mb-4">Contact</h2>
-
-        <div className="flex flex-wrap gap-4 text-gray-300">
-          <a
-            href="https://www.linkedin.com/in/rohanksingh/"
-            target="_blank"
-            className="underline hover:text-white"
-          >
-            LinkedIn
-          </a>
-
-          <a
-            href="https://github.com/rohanksingh"
-            target="_blank"
-            className="underline hover:text-white"
-          >
-            GitHub
-          </a>
-        </div>
+      <section className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12">
+        <p className="text-xs text-gray-600">
+          Observations are based on publicly available information and personal analysis. Not financial or investment advice.
+        </p>
       </section>
-
-<section
-  id="message me "
-  className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12"
->
-  <h2 className="text-3xl font-bold mb-4">Contact</h2>
-
-  <form
-    action="https://formspree.io/f/mpqblgbn"  
-    method="POST"
-    className="grid gap-4 max-w-2xl"
-  >
-    <input
-      type="text"
-      name="name"
-      placeholder="Your name"
-      required
-      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
-    />
-
-    <input
-      type="email"
-      name="email"
-      placeholder="Your email"
-      required
-      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
-    />
-
-    <textarea
-      name="message"
-      placeholder="Your message"
-      required
-      rows={5}
-      className="rounded-lg bg-gray-900 border border-gray-700 px-4 py-3 text-white"
-    />
-
-    <button
-      type="submit"
-      className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 w-fit"
-    >
-      Send Message
-    </button>
-  </form>
-</section>
     </main>
   );
 }
