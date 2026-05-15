@@ -55,7 +55,7 @@ export default function Home() {
 
         <div className="flex flex-wrap gap-4">
           <a
-            href="/resume/Rohan_Kumar_Resume.pdf"
+            href="/resume/Kumar Rohan_Resume_2026.pdf"
             target="_blank"
             className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 transition"
           >
