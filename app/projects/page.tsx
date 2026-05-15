@@ -13,21 +13,21 @@ const projects = [
     description:
       "End-to-end PD modeling platform with feature engineering, stress scenarios, and model monitoring for credit risk analytics aligned with regulatory expectations.",
     link: "https://github.com/rohanksingh/creditrisk",
-    tags: ["Python", "Scikit-learn", "Credit Risk"],
+    tags: ["Python", "C++","Scikit-learn", "Credit Risk"],
   },
   {
     title: "PPNR / CCAR Risk Modeling Platform",
     description:
       "Scenario-based risk platform for stress testing, revenue projection, and CCAR-style analytics. Supports macro scenario overlays and model-based forecasting.",
     link: "https://github.com/rohanksingh/ccar",
-    tags: ["Python", "CCAR", "Stress Testing"],
+    tags: ["Python", "C++","CCAR", "Stress Testing"],
   },
   {
     title: "Enterprise Data Platform Pipeline",
     description:
       "End-to-end data pipeline with bronze, silver, and gold layers including validation, reconciliation, and analytics output for financial data workflows.",
     link: "https://github.com/rohanksingh/Enterprise-data-platform-pipeline",
-    tags: ["Python", "SQL", "Data Engineering"],
+    tags: ["Python", "SQL", "Data Engineering", "Dockerfile"],
   },
 ];
 
