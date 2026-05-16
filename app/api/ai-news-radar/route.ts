@@ -1,85 +1,76 @@
-
 export async function GET() {
-if (process.env.NODE_ENV === "production") {
-  return Response.json({
-    lastUpdated: new Date().toISOString(),
-    radarItems: [
-      {
-        title: "AI Governance in Financial Services",
-        detail:
-          "Financial institutions are increasing focus on AI model validation, explainability, and compliance monitoring.",
-        category: "Governance",
-      },
-      {
-        title: "Agentic AI for Surveillance",
-        detail:
-          "Agentic AI workflows are emerging for alert triage, context retrieval, and explainable investigation summaries.",
-        category: "Trade Surveillance",
-      },
-    ],
-  });
-}
   try {
-    const prompt = `
-Generate exactly 6 AI-in-finance radar cards for a financial services portfolio website.
+    const apiKey = process.env.NEWS_API_KEY;
 
-Return valid JSON only in this exact shape:
-{
-  "radarItems": [
-    {
-      "title": "AI Governance in Financial Services",
-      "detail": "Banks are increasing focus on AI model validation and explainability.",
-      "category": "Governance"
+    if (!apiKey) {
+      return Response.json({
+        error: "Missing NEWS_API_KEY",
+        radarItems: [],
+      });
     }
-  ]
-}
 
-Focus areas:
-- AI governance
-- LLMs in banking operations
-- agentic AI in surveillance
-- model risk management
-- synthetic data
-- jobs and skills
+    const query =
+      '("AI governance" OR "model risk management" OR "financial AI" OR "LLM banking" OR "trade surveillance AI" OR "compliance AI")';
 
-Tone:
-professional
-banking-focused
-practical
-`;
+    const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+      query
+    )}&language=en&sortBy=publishedAt&pageSize=6&apiKey=${apiKey}`;
 
-    const res = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama3.1",
-        prompt,
-        stream: false,
-        format: "json",
-      }),
-    });
+
+    const res = await fetch(url);
 
     const data = await res.json();
-    const parsed = JSON.parse(data.response);
+
+    const blockedSources = [
+      "Times of India",
+      "Gizmodo",
+      "Slashdot",
+      "Yahoo",
+      "MSN",
+    ];
+
+    const radarItems = (data.articles || [])
+      .filter((article: any) => {
+        const source = article.source?.name || "";
+
+        if (
+          blockedSources.some((blocked) =>
+            source.toLowerCase().includes(blocked.toLowerCase())
+          )
+        ) {
+          return false;
+        }
+
+        const text =
+          `${article.title} ${article.description}`.toLowerCase();
+
+        return (
+          text.includes("bank") ||
+          text.includes("finance") ||
+          text.includes("risk") ||
+          text.includes("compliance") ||
+          text.includes("surveillance") ||
+          text.includes("governance") ||
+          text.includes("capital markets")
+        );
+      })
+      .slice(0, 6)
+      .map((article: any) => ({
+        title: article.title,
+        detail:
+          article.description || "No description available.",
+        category: article.source?.name || "AI / Finance",
+        url: article.url,
+      }));
 
     return Response.json({
       lastUpdated: new Date().toISOString(),
-      radarItems: parsed.radarItems || [],
+      radarItems,
     });
   } catch (error: any) {
     return Response.json({
-      lastUpdated: new Date().toISOString(),
-      error: error?.message || "Local Llama failed",
-      radarItems: [
-        {
-          title: "AI Governance in Financial Services",
-          detail:
-            "Financial institutions are increasing focus on AI model validation and explainability.",
-          category: "Governance",
-        },
-      ],
+      error: error?.message || "NewsAPI failed",
+      radarItems: [],
     });
   }
 }
