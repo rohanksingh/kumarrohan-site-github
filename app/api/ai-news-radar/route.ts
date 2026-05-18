@@ -10,57 +10,49 @@ export async function GET() {
     }
 
     const query =
-      '("AI governance" OR "model risk management" OR "financial AI" OR "LLM banking" OR "trade surveillance AI" OR "compliance AI")';
+      '("AI governance" OR "model risk management" OR "LLM banking" OR "trade surveillance AI" OR "financial services AI" OR "AI compliance")';
 
     const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
       query
-    )}&language=en&sortBy=publishedAt&pageSize=6&apiKey=${apiKey}`;
+    )}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`;
 
-
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      next: { revalidate: 3600 },
+    });
 
     const data = await res.json();
 
-    const blockedSources = [
-      "Times of India",
-      "Gizmodo",
-      "Slashdot",
-      "Yahoo",
-      "MSN",
-    ];
+    if (!res.ok) {
+      return Response.json({
+        error: data.message || "NewsAPI failed",
+        radarItems: [],
+      });
+    }
 
     const radarItems = (data.articles || [])
       .filter((article: any) => {
-        const source = article.source?.name || "";
-
-        if (
-          blockedSources.some((blocked) =>
-            source.toLowerCase().includes(blocked.toLowerCase())
-          )
-        ) {
-          return false;
-        }
-
-        const text =
-          `${article.title} ${article.description}`.toLowerCase();
+        const text = `${article.title || ""} ${
+          article.description || ""
+        }`.toLowerCase();
 
         return (
-          text.includes("bank") ||
-          text.includes("finance") ||
-          text.includes("risk") ||
-          text.includes("compliance") ||
-          text.includes("surveillance") ||
+          text.includes("ai") ||
+          text.includes("artificial intelligence") ||
+          text.includes("llm") ||
+          text.includes("model risk") ||
           text.includes("governance") ||
-          text.includes("capital markets")
+          text.includes("compliance") ||
+          text.includes("bank") ||
+          text.includes("finance")
         );
       })
       .slice(0, 6)
       .map((article: any) => ({
         title: article.title,
-        detail:
-          article.description || "No description available.",
+        detail: article.description || "No description available.",
         category: article.source?.name || "AI / Finance",
         url: article.url,
+        publishedAt: article.publishedAt,
       }));
 
     return Response.json({
@@ -69,7 +61,7 @@ export async function GET() {
     });
   } catch (error: any) {
     return Response.json({
-      error: error?.message || "NewsAPI failed",
+      error: error?.message || "AI radar API failed",
       radarItems: [],
     });
   }

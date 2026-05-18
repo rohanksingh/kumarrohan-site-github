@@ -7,6 +7,8 @@ type RadarItem = {
   title: string;
   detail: string;
   category: string;
+  url?: string;
+  publishedAt?: string;
 };
 
 const fallbackRadarItems: RadarItem[] = [
@@ -19,7 +21,8 @@ const fallbackRadarItems: RadarItem[] = [
 ];
 
 export default function AINewsRadarPage() {
-  const [radarItems, setRadarItems] = useState<RadarItem[]>(fallbackRadarItems);
+  const [radarItems, setRadarItems] =
+    useState<RadarItem[]>(fallbackRadarItems);
   const [lastUpdated, setLastUpdated] = useState<string>("Static fallback");
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +30,7 @@ export default function AINewsRadarPage() {
     fetch("/api/ai-news-radar")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.radarItems)) {
+        if (Array.isArray(data.radarItems) && data.radarItems.length > 0) {
           setRadarItems(data.radarItems);
         }
 
@@ -56,20 +59,26 @@ export default function AINewsRadarPage() {
 
         <p className="text-gray-300 max-w-3xl">
           Tracking how artificial intelligence, LLMs, and agentic systems are
-          reshaping risk analytics, compliance, and financial services operations.
+          reshaping risk analytics, compliance, and financial services
+          operations.
         </p>
 
         <p className="text-xs text-gray-500 mt-3">
-          {loading ? "Generating latest AI radar..." : `Last updated: ${lastUpdated}`}
+          {loading
+            ? "Loading latest AI radar..."
+            : `Last updated: ${lastUpdated}`}
         </p>
       </section>
 
       <section className="max-w-5xl mx-auto mb-16">
         <div className="grid md:grid-cols-2 gap-6">
           {radarItems.map((item) => (
-            <div
-              key={item.title} 
-              className="rounded-xl border border-gray-800 bg-gray-900/70 p-6"
+            <a
+              key={item.title}
+              href={item.url || "#"}
+              target={item.url ? "_blank" : "_self"}
+              rel="noopener noreferrer"
+              className="block rounded-xl border border-gray-800 bg-gray-900/70 p-6 hover:border-blue-400 hover:-translate-y-1 transition"
             >
               <span className="inline-block text-xs font-semibold uppercase tracking-wider text-blue-400 mb-3">
                 {item.category}
@@ -78,14 +87,20 @@ export default function AINewsRadarPage() {
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
 
               <p className="text-sm text-gray-400">{item.detail}</p>
-            </div>
+
+              {item.publishedAt && (
+                <p className="text-xs text-gray-600 mt-4">
+                  Published: {new Date(item.publishedAt).toLocaleDateString()}
+                </p>
+              )}
+            </a>
           ))}
         </div>
       </section>
 
       <section className="max-w-5xl mx-auto border-t border-gray-800 pt-8 pb-12">
         <p className="text-xs text-gray-600">
-          Observations are generated using a local Llama model and are for
+          Observations are based on publicly available news sources and are for
           informational purposes only. Not financial or investment advice.
         </p>
       </section>
