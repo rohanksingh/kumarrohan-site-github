@@ -112,6 +112,21 @@ export default function Home() {
           Contact Me →
         </Link>
       </section>
-    </main>
+
+{/* Footer */}
+<footer className="border-t border-gray-800 pt-6 pb-8 text-center text-gray-400 text-sm">
+  <p className="mb-2">
+    Created by Rohan Kumar | AI News Radar
+  </p>
+
+  <div className="flex justify-center">
+    <img
+      src="https://hits.sh/kumarrohan.org.svg?label=Site%20Visits&color=2563eb"
+      alt="Site visits"
+    />
+  </div>
+</footer>
+
+</main>
   );
 }
