@@ -116,7 +116,7 @@ export default function Home() {
 {/* Footer */}
 <footer className="border-t border-gray-800 pt-6 pb-8 text-center text-gray-400 text-sm">
   <p className="mb-2">
-    Created by Rohan Kumar | AI News Radar
+    Created by Rohan Kumar | Market Insights | AI News Radar 
   </p>
 
   <div className="flex justify-center">
