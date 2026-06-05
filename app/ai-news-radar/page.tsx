@@ -52,7 +52,7 @@ export default function AINewsRadarPage() {
 
       <section className="max-w-5xl mx-auto pt-12 pb-10">
         <p className="text-sm uppercase tracking-widest text-blue-400 mb-3">
-          Tracking AI in Finance
+          
         </p>
 
         <h1 className="text-5xl font-bold mb-4">AI News Radar</h1>
