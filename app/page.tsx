@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import SportsFlashNews from "@/components/SportsFlashNews";
 
 const sections = [
   {
@@ -38,6 +39,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white px-6 py-10">
       <Navbar />
+
+      {/* Sports Flash News */}
+      <SportsFlashNews />
 
       {/* Hero */}
       <section className="max-w-5xl mx-auto pt-12 pb-16">
