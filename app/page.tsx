@@ -57,14 +57,39 @@ export default function Home() {
           AI-enabled analytics.
         </p>
 
-        <div className="flex flex-wrap gap-4">
+        {/* <div className="flex flex-wrap gap-4">
           <a
             href="/resume/Kumar Rohan_Resume_2026.pdf"
             target="_blank"
             className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 transition"
           >
             Download Resume
-          </a>
+          </a> */}
+
+
+          <div className="relative group">
+            <button className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 transition">
+              Download Resume ▼
+            </button>
+
+            <div className="absolute left-0 mt-2 hidden group-hover:block w-64 rounded-lg bg-gray-900 border border-gray-700 shadow-xl z-50">
+              <a
+                href="/resume/Kumar_Rohan_Risk_Analytics_Resume.pdf"
+                target="_blank"
+                className="block px-4 py-3 text-white hover:bg-gray-800"
+              >
+                📄 Risk Analytics Resume
+              </a>
+
+              <a
+                href="/resume/Kumar_Rohan_Data_Science_Resume.pdf"
+                target="_blank"
+                className="block px-4 py-3 text-white hover:bg-gray-800"
+              >
+                📊 Data Science Resume
+              </a>
+            </div>
+          </div>
           <a
             href="https://github.com/rohanksingh"
             target="_blank"
