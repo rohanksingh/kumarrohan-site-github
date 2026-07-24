@@ -24,7 +24,8 @@ export default function SportsFlashNews() {
   return (
     <section className="mt-16">
       <h2 className="text-3xl font-bold mb-6">
-        Sports Flash News
+        {/* Sports Flash News    */}
+        News   
       </h2>
 
       <div className="grid md:grid-cols-3 gap-6">

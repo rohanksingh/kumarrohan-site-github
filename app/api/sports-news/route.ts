@@ -5,7 +5,8 @@ export async function GET() {
 
   const url =
     `https://newsapi.org/v2/everything?` +
-    `q=${encodeURIComponent("FIFA World Cup OR football OR soccer")}` +
+    // `q=${encodeURIComponent("FIFA World Cup OR football OR soccer")}` +
+   `q=${encodeURIComponent("All News")}` +
     `&language=en` +
     `&sortBy=publishedAt` +
     `&pageSize=6` +
