@@ -57,14 +57,14 @@ export default function Home() {
           AI-enabled analytics.
         </p>
 
-        {/* <div className="flex flex-wrap gap-4">
-          <a
+         <div className="flex flex-wrap gap-4">
+          {/* <a
             href="/resume/Kumar Rohan_Resume_2026.pdf"
             target="_blank"
             className="rounded-lg bg-white text-black px-5 py-3 font-semibold hover:bg-gray-200 transition"
           >
             Download Resume
-          </a> */}
+          </a>  */}
 
 
           <div className="relative group">
@@ -74,7 +74,7 @@ export default function Home() {
 
             <div className="absolute left-0 mt-2 hidden group-hover:block w-64 rounded-lg bg-gray-900 border border-gray-700 shadow-xl z-50">
               <a
-                href="/resume/Kumar_Rohan_Risk_Analytics_Resume.pdf"
+                href="/resume/Kumar_Rohan_Resume_TCAP.pdf"
                 target="_blank"
                 className="block px-4 py-3 text-white hover:bg-gray-800"
               >
@@ -82,7 +82,7 @@ export default function Home() {
               </a>
 
               <a
-                href="/resume/Kumar_Rohan_Data_Science_Resume.pdf"
+                href="/resume/Resume_DS.pdf"
                 target="_blank"
                 className="block px-4 py-3 text-white hover:bg-gray-800"
               >
