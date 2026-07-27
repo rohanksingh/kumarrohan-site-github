@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Financial Crime Detection System — CS625 Demo</title>
+<style>
+  :root {
+    --ink:#EAF0FB;            /* primary text (light on dark) */
+    --slate:#A9B8D4;          /* secondary text */
+    --amber:#F2B44C;          /* accent */
+    --red:#E5675A; --green:#6FBF73;
+    --paper:#0B1220;          /* page background (deep navy) */
+    --panel:#111A2E;          /* card / rail surface */
+    --line:#22304C;           /* hairlines */
+    --mute:#7C8BA8;           /* muted captions */
+    --code-bg:#0E1626; --code-fg:#D7DCE6;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a { color:inherit; }
+  code, pre, .mono { font-family:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace; }
+
+  /* ── Layout ── */
+  .wrap { display:grid; grid-template-columns:260px 1fr; max-width:1180px; margin:0 auto; }
+  nav.rail {
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    border-right:1px solid var(--line); padding:28px 20px; background:var(--paper);
+  }
+  main { padding:0 40px 120px; min-width:0; }
+
+  /* ── Rail ── */
+  .brand { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); font-weight:700; }
+  .brand-sub { font-size:13px; color:var(--mute); margin-top:2px; }
+  .rail h4 { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); margin:26px 0 8px; }
+  .rail a { display:flex; gap:10px; align-items:baseline; text-decoration:none; color:var(--slate);
+    font-size:13.5px; padding:5px 8px; border-radius:6px; border-left:2px solid transparent; }
+  .rail a:hover { background:#16223A; color:var(--ink); }
+  .rail a .idx { font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--amber); min-width:18px; }
+  .rail a.active { background:#182543; border-left-color:var(--amber); color:var(--ink); font-weight:600; }
+
+  /* ── Hero ── */
+  header.hero { padding:70px 0 40px; border-bottom:1px solid var(--line); }
+  .eyebrow { font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.1em;
+    color:var(--slate); text-transform:uppercase; }
+  h1 { font-size:46px; line-height:1.05; letter-spacing:-.02em; margin:14px 0 10px; font-weight:800; }
+  h1 em { font-style:normal; color:var(--amber); }
+  .lede { font-size:17.5px; color:var(--slate); max-width:60ch; }
+  .stats { display:flex; flex-wrap:wrap; gap:0; margin-top:34px; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .stat { flex:1 1 130px; padding:16px 18px; border-right:1px solid var(--line); background:var(--panel); }
+  .stat:last-child { border-right:none; }
+  .stat .n { font-size:26px; font-weight:800; font-family:"JetBrains Mono",monospace; }
+  .stat .l { font-size:12px; color:var(--mute); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+
+  /* ── Sections ── */
+  section { padding:52px 0; border-bottom:1px solid var(--line); }
+  .sec-label { font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--amber);
+    letter-spacing:.1em; text-transform:uppercase; }
+  h2 { font-size:30px; letter-spacing:-.015em; margin:8px 0 6px; font-weight:800; }
+  h3 { font-size:20px; margin:34px 0 6px; font-weight:700; }
+  h4.step { font-size:16px; margin:26px 0 6px; font-weight:700; display:flex; align-items:center; gap:10px; }
+  h4.step .tag { font-family:"JetBrains Mono",monospace; font-size:10.5px; background:#1D2C4C; color:var(--amber);
+    padding:2px 7px; border-radius:4px; letter-spacing:.05em; }
+  p { max-width:68ch; }
+  .muted { color:var(--mute); }
+
+  /* ── Code blocks ── */
+  .code { position:relative; background:var(--code-bg); border-radius:10px; margin:16px 0 8px; overflow:hidden; }
+  .code .bar { display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; background:#16223A; border-bottom:1px solid #22304C; }
+  .code .bar span { font-family:"JetBrains Mono",monospace; font-size:11px; color:#8A93A8; letter-spacing:.08em; }
+  .code button { font-family:"JetBrains Mono",monospace; font-size:11px; background:transparent;
+    color:#8A93A8; border:1px solid #35405A; padding:3px 10px; border-radius:5px; cursor:pointer; }
+  .code button:hover { color:#fff; border-color:#55617f; }
+  .code pre { margin:0; padding:16px 18px; overflow-x:auto; }
+  .code code { color:var(--code-fg); font-size:13px; line-height:1.7; white-space:pre; }
+  .tok-c { color:#7E8AA6; font-style:italic; }   /* comment */
+  .tok-k { color:#E8A13A; }                        /* keyword */
+  .tok-s { color:#8FCf9a; }                        /* string  */
+  .tok-f { color:#7FB0E8; }                        /* func/class */
+  .tok-n { color:#D98C6A; }                        /* number  */
+
+  /* ── Tables ── */
+  table { border-collapse:collapse; width:100%; margin:16px 0; font-size:13.5px; }
+  th { background:#16223A; color:var(--ink); text-align:left; padding:9px 12px; font-weight:600; border-bottom:1px solid var(--line); }
+  td { padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:nth-child(even) td { background:#0F1A2E; }
+  td.mono, th.mono { font-family:"JetBrains Mono",monospace; font-size:12.5px; }
+
+  /* ── Badges & callouts ── */
+  .badge { display:inline-block; color:#fff; font-size:11px; padding:2px 9px; border-radius:20px;
+    font-weight:600; white-space:nowrap; }
+  .b-high{ background:var(--red);} .b-med{ background:var(--amber);} .b-low{ background:var(--green);}
+  .callout { border-left:3px solid var(--amber); background:#12203A; padding:12px 16px;
+    border-radius:0 8px 8px 0; margin:18px 0; font-size:14.5px; }
+  .callout.warn { border-left-color:var(--red); background:#241726; }
+  .callout .k { font-weight:700; }
+
+  .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+  .pill { font-family:"JetBrains Mono",monospace; font-size:12px; border:1px solid var(--line);
+    background:var(--panel); padding:5px 11px; border-radius:20px; color:var(--slate); }
+
+  /* ── Terminal ── */
+  .term { background:#0E1220; border-radius:10px; padding:16px 18px; margin:16px 0;
+    font-family:"JetBrains Mono",monospace; font-size:12.5px; color:#C6CEDF; overflow-x:auto; line-height:1.65; }
+  .term .g{color:#6FBF73;} .term .a{color:#E8A13A;} .term .r{color:#E06A5A;} .term .d{color:#6C7891;}
+
+  footer { padding:40px; text-align:center; color:var(--mute); font-size:13px; }
+  .disclaimer { max-width:70ch; margin:24px auto 0; font-size:12.5px; color:var(--mute);
+    border-top:1px solid var(--line); padding-top:18px; }
+
+  @media (max-width:860px){
+    .wrap { grid-template-columns:1fr; }
+    nav.rail { position:static; height:auto; border-right:none; border-bottom:1px solid var(--line); }
+    main { padding:0 22px 80px; }
+    h1 { font-size:34px; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+
+  /* ── Live runner (Pyodide) ── */
+  .runbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:20px 0 8px;padding:16px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;}
+  button.run{font-family:inherit;font-size:15px;font-weight:700;color:#0B1220;background:var(--amber);
+    border:none;padding:11px 22px;border-radius:8px;cursor:pointer;transition:.15s;}
+  button.run:hover:not(:disabled){filter:brightness(1.08);}
+  button.run:disabled{opacity:.5;cursor:not-allowed;}
+  button.ghost{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--slate);
+    background:transparent;border:1px solid var(--line);padding:10px 15px;border-radius:8px;cursor:pointer;}
+  button.ghost:hover:not(:disabled){color:var(--ink);border-color:#3a4a68;}
+  button.ghost:disabled{opacity:.4;cursor:not-allowed;}
+  .status{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--mute);}
+  .live-tag{display:inline-flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;
+    font-size:12px;color:var(--green);border:1px solid var(--line);background:var(--panel);
+    padding:4px 11px;border-radius:20px;margin-bottom:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(111,191,115,.5);}70%{box-shadow:0 0 0 8px rgba(111,191,115,0);}100%{box-shadow:0 0 0 0 rgba(111,191,115,0);}}
+  .hidden{display:none;}
+  #liveTerm{min-height:60px;white-space:pre-wrap;}
+  .chart{display:flex;align-items:flex-end;gap:16px;height:190px;padding:18px 8px 0;margin:14px 0;
+    border-bottom:1px solid var(--line);}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+  .bar-stack{width:66%;border-radius:4px 4px 0 0;overflow:hidden;transition:height .6s cubic-bezier(.2,.8,.2,1);}
+  .bar-label{font-size:11px;color:var(--mute);text-align:center;line-height:1.3;}
+  .bar-val{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:var(--ink);}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--slate);margin-top:2px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="rail">
+    <div class="brand">CS-625 · OO Software</div>
+    <div class="brand-sub">Financial Crime Detection</div>
+
+    <h4>Overview</h4>
+    <a href="#top"><span class="idx">00</span> Introduction</a>
+
+    <h4>1 · Architecture</h4>
+    <a href="#arch"><span class="idx">1.0</span> How it's built</a>
+    <a href="#hierarchy"><span class="idx">1.1</span> Rule hierarchy</a>
+    <a href="#alert"><span class="idx">1.2</span> The Alert record</a>
+    <a href="#dispatch"><span class="idx">1.3</span> Type dispatch</a>
+
+    <h4>2 · The Rules</h4>
+    <a href="#rules"><span class="idx">2.0</span> Six detectors</a>
+    <a href="#wash"><span class="idx">2.1</span> Wash trade</a>
+    <a href="#spoof"><span class="idx">2.2</span> Spoofing</a>
+    <a href="#frontrun"><span class="idx">2.3</span> Front running</a>
+    <a href="#velocity"><span class="idx">2.4</span> Velocity burst</a>
+    <a href="#timeofday"><span class="idx">2.5</span> Time-of-day</a>
+    <a href="#amount"><span class="idx">2.6</span> Amount &amp; structuring</a>
+
+    <h4>3 · A Run</h4>
+    <a href="#run"><span class="idx">3.0</span> Data → alerts</a>
+    <a href="#output"><span class="idx">3.1</span> The output</a>
+    <a href="#quality"><span class="idx">3.2</span> Detection quality</a>
+    <a href="#live"><span class="idx">3.3</span> Run it live</a>
+
+    <h4>Wrap-up</h4>
+    <a href="#stack"><span class="idx">★</span> Tech &amp; design notes</a>
+  </nav>
+
+  <main>
+    <header class="hero" id="top">
+      <div class="eyebrow">Object-Oriented Software · Final Project</div>
+      <h1>A rule-based engine that watches<br>for <em>market manipulation</em><br>and <em>payment fraud</em>.</h1>
+      <p class="lede">Six detectors scan trade and transaction streams, group activity by entity,
+        and raise immutable, severity-ranked alerts. Built in Python around an abstract rule
+        hierarchy, verified by 44 tests. This page walks through how it's built, what each rule
+        looks for, and what one run produces.</p>
+      <div class="stats">
+        <div class="stat"><div class="n">6</div><div class="l">Detectors</div></div>
+        <div class="stat"><div class="n">44</div><div class="l">Tests passing</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">Output formats</div></div>
+        <div class="stat"><div class="n">7 / 7</div><div class="l">Patterns caught</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">False positives</div></div>
+      </div>
+    </header>
+
+    <!-- ══════════════ SECTION 1 : ARCHITECTURE ══════════════ -->
+    <section id="arch">
+      <div class="sec-label">Part 1 · Architecture</div>
+      <h2>How the system is built</h2>
+      <p>Every piece of the system has one job. Raw records become typed objects; typed objects
+        accumulate into per-entity profiles; rules read profiles and emit alerts; a manager ranks
+        the alerts; a reporter renders them. Each stage talks to the next through a small, stable
+        interface, so any one piece can change without disturbing the rest.</p>
+
+      <div class="pill-row">
+        <span class="pill">Trade / Transaction</span>
+        <span class="pill">→ EntityProfile</span>
+        <span class="pill">→ DetectionRule</span>
+        <span class="pill">→ Alert</span>
+        <span class="pill">→ AlertManager</span>
+        <span class="pill">→ ReportGenerator</span>
+      </div>
+
+      <h3 id="hierarchy">1.1 · The rule hierarchy</h3>
+      <p>All six detectors descend from one abstract base. Two intermediate classes split the world
+        into market-surveillance and payment-fraud rules, and each binds itself to the kind of entity
+        it applies to. Adding a seventh rule means adding a subclass — nothing else in the system changes.</p>
+      <div class="code">
+        <div class="bar"><span>detection_rules.py</span><button onclick="cp(this)">copy</button></div>
+        <pre><code><span class="tok-k">class</span> <span class="tok-f">DetectionRule</span>(ABC):
+    <span class="tok-k">def</span> <span class="tok-f">__init__</span>(self, rule_name, severity, time_window_seconds):
+        <span class="tok-k">if</span> time_window_seconds &lt;= <span class="tok-n">0</span>:
+            <span class="tok-k">raise</span> InvalidThresholdError(...)   <span class="tok-c"># fail fast on bad config</span>
+        self.rule_name = rule_name
+        self.severity  = severity
+
+    <span class="tok-f">@abstractmethod</span>
+    <span class="tok-k">def</span> <span class="tok-f">detect</span>(self, profile): ...        <span class="tok-c"># every rule must implement this</span>
+
+<span class="tok-k">class</span> <span class="tok-f">MarketRule</span>(DetectionRule, ABC):
+    profile_type = TraderProfile          <span class="tok-c"># applies to traders</span>
+
+<span class="tok-k">class</span> <span class="tok-f">FraudRule</span>(DetectionRule, ABC):
+    profile_type = CustomerProfile        <span class="tok-c"># applies to customers</span></code></pre>
+      </div>
+      <div class="callout"><span class="k">Why it matters:</span> the abstract <code>detect()</code> is the
+        contract. The main loop calls <code>rule.detect(profile)</code> without ever naming a concrete
+        class — the right version runs based on the object's real type. That's polymorphism doing the routing.</div>
+
+      <h3 id="alert">1.2 · The Alert — an immutable record</h3>
+      <p>An alert is evidence, and evidence shouldn't change after it's written. Alerts are a frozen
+        dataclass: severity is normalized once at construction, every alert gets a unique ID, and any
+        attempt to mutate one raises an error.</p>
+      <div class="code">
+        <div class="bar"><span>alert.py</span><button onclick="cp(this)">copy</button></div>
+        <pre><code><span class="tok-f">@dataclass</span>(frozen=<span class="tok-k">True</span>)
+<span class="tok-k">class</span> <span class="tok-f">Alert</span>:
+    rule_name: str
+    entity_id: str
+    severity:  str            <span class="tok-c"># normalized to UPPER in __post_init__</span>
+    message:   str
+    evidence:  tuple = ()
+    timestamp: str = field(default_factory=now_iso)
+    alert_id:  str = field(default_factory=next_id)   <span class="tok-c"># ALT-00001, ALT-00002...</span></code></pre>
+      </div>
+      <div class="callout warn"><span class="k">A real bug this fixed:</span> in an earlier version, detectors
+        emitted <code>"High"</code> while the manager expected <code>"HIGH"</code>, so a medium alert once
+        outranked two high ones in a live log. Normalizing inside the constructor made the mismatch
+        impossible everywhere at once.</div>
+
+      <h3 id="dispatch">1.3 · Type-safe dispatch</h3>
+      <p>Because each rule declares its <code>profile_type</code>, the orchestrator can only ever hand a
+        trader profile to a market rule and a customer profile to a fraud rule. An invalid pairing isn't
+        caught at runtime — it's structurally impossible.</p>
+      <div class="code">
+        <div class="bar"><span>main.py — dispatch loop</span><button onclick="cp(this)">copy</button></div>
+        <pre><code><span class="tok-k">for</span> profile <span class="tok-k">in</span> profiles.values():
+    <span class="tok-k">for</span> rule <span class="tok-k">in</span> rules:
+        <span class="tok-k">if</span> <span class="tok-f">isinstance</span>(profile, rule.profile_type):
+            manager.add_alerts(rule.detect(profile))</code></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════ SECTION 2 : THE RULES ══════════════ -->
+    <section id="rules">
+      <div class="sec-label">Part 2 · The Rules</div>
+      <h2>Six detectors, two domains</h2>
+      <p>Three rules watch trading activity for market manipulation; three watch payment activity for
+        fraud. Each reads only the events inside its own time window and raises an alert when a pattern
+        crosses its threshold.</p>
+
+      <table>
+        <thead><tr><th>Rule</th><th>Domain</th><th>Looks for</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr><td>Wash Trade</td><td>Market</td><td>Offsetting buy/sell round-trips by one trader</td><td><span class="badge b-high">HIGH</span></td></tr>
+          <tr><td>Spoofing</td><td>Market</td><td>Large orders cancelled moments after placement</td><td><span class="badge b-high">HIGH</span></td></tr>
+          <tr><td>Front Running</td><td>Market</td><td>Trading just ahead of a large client order</td><td><span class="badge b-med">MED</span></td></tr>
+          <tr><td>Velocity Burst</td><td>Fraud</td><td>Too many transactions in a short window</td><td><span class="badge b-high">HIGH</span></td></tr>
+          <tr><td>Time-of-Day</td><td>Fraud</td><td>Activity far outside an account's normal hours</td><td><span class="badge b-med">MED</span></td></tr>
+          <tr><td>Amount / Structuring</td><td>Fraud</td><td>Large sums, or many just under a reporting limit</td><td><span class="badge b-high">HIGH</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4 class="step" id="wash"><span class="tag">RULE 2.1</span> Wash trade detection</h4>
+      <p>A wash trade is a buy and a sell of the same security, by the same trader, at nearly the same
+        size and time — activity that looks like trading but moves no real ownership. The detector pairs
+        buys against sells and flags any pair inside the window whose volumes overlap past a threshold.</p>
+      <div class="code">
+        <div class="bar"><span>WashTradeDetector.detect()</span><button onclick="cp(this)">copy</button></div>
+        <pre><code>buys  = [t <span class="tok-k">for</span> t <span class="tok-k">in</span> trades <span class="tok-k">if</span> t.order_type == <span class="tok-s">"BUY"</span>]
+sells = [t <span class="tok-k">for</span> t <span class="tok-k">in</span> trades <span class="tok-k">if</span> t.order_type == <span class="tok-s">"SELL"</span>]
+<span class="tok-k">for</span> buy <span class="tok-k">in</span> buys:
+    <span class="tok-k">for</span> sell <span class="tok-k">in</span> sells:
+        overlap = <span class="tok-f">min</span>(buy.volume, sell.volume) / <span class="tok-f">max</span>(buy.volume, sell.volume)
+        <span class="tok-k">if</span> buy.symbol == sell.symbol \
+           <span class="tok-k">and</span> buy.time_diff(sell) &lt;= self.time_window_seconds \
+           <span class="tok-k">and</span> overlap &gt;= self.volume_overlap_pct:
+            alerts.append(self._make_alert(...))   <span class="tok-c"># round-trip found</span></code></pre>
+      </div>
+      <div class="callout"><span class="k">Complexity note:</span> pairing buys against sells is O(n²) in the
+        worst case, but only <em>within</em> a bounded time window — so in practice it's O(n·k) where k is
+        the number of trades per window. Narrowing the window directly shrinks the comparison set.</div>
+
+      <h4 class="step" id="spoof"><span class="tag">RULE 2.2</span> Spoofing</h4>
+      <p>A large order placed and then cancelled within seconds can be an attempt to mislead others about
+        supply or demand. The detector links each cancellation back to its placement by order ID and
+        measures the gap.</p>
+      <div class="callout warn"><span class="k">A bug this rule taught me:</span> the first version put the
+        <code>return</code> inside the cancel loop, so only the <em>first</em> cancellation was ever
+        checked — a spoofer who cancelled several orders would have all but one slip through. A regression
+        test now guards against it.</div>
+
+      <h4 class="step" id="frontrun"><span class="tag">RULE 2.3</span> Front running</h4>
+      <p>Buying just before a large client order in the same security can indicate trading on advance
+        knowledge of that order. The detector pairs each large client buy against the trader's own buys
+        and checks that the trader's order landed <em>before</em> the client's, inside the window.</p>
+      <div class="code">
+        <div class="bar"><span>FrontRunningDetector.detect()</span><button onclick="cp(this)">copy</button></div>
+        <pre><code>trader_buys = [t <span class="tok-k">for</span> t <span class="tok-k">in</span> trades <span class="tok-k">if</span> t.order_type == <span class="tok-s">"BUY"</span>]
+client_buys = [t <span class="tok-k">for</span> t <span class="tok-k">in</span> trades <span class="tok-k">if</span> t.order_type == <span class="tok-s">"CLIENT_BUY"</span>
+               <span class="tok-k">and</span> t.volume &gt;= self.large_client_volume]
+
+<span class="tok-k">for</span> client <span class="tok-k">in</span> client_buys:
+    <span class="tok-k">for</span> buy <span class="tok-k">in</span> trader_buys:
+        <span class="tok-k">if</span> buy.symbol == client.symbol <span class="tok-k">and</span> \
+           <span class="tok-n">0</span> &lt; (client.timestamp - buy.timestamp).total_seconds() &lt;= self.time_window_seconds:
+            profile.update_risk_score(<span class="tok-s">"manipulation"</span>, <span class="tok-n">25</span>)
+            alerts.append(self._make_alert(...))</code></pre>
+      </div>
+      <div class="callout"><span class="k">Note the strict <code>0 &lt;</code>:</span> the trader's buy must come
+        strictly <em>before</em> the client order, not after. Direction of time is what separates
+        front-running from an ordinary trade that happens to sit nearby in the tape.</div>
+
+      <h4 class="step" id="velocity"><span class="tag">RULE 2.4</span> Velocity burst</h4>
+      <p>An account making far more transactions than usual in a short window can signal automated or
+        unauthorized activity. This rule is the simplest — count the in-window transactions, compare to a
+        threshold — and the most linear: O(n) over the transactions, with O(1) lookups per account.</p>
+      <div class="code">
+        <div class="bar"><span>VelocityChecker.detect()</span><button onclick="cp(this)">copy</button></div>
+        <pre><code>txns = self._get_transactions(profile)
+<span class="tok-k">if</span> <span class="tok-f">len</span>(txns) &gt; self.max_transactions:
+    profile.update_risk_score(<span class="tok-s">"fraud"</span>, <span class="tok-n">25</span>)
+    <span class="tok-k">return</span> [self._make_alert(
+        entity_id=profile.entity_id,
+        description=<span class="tok-s">f"{len(txns)} transactions in </span>
+                    <span class="tok-s">{self.time_window_seconds//60} minutes"</span>,
+        evidence=[t.to_dict() <span class="tok-k">for</span> t <span class="tok-k">in</span> txns],
+    )]</code></pre>
+      </div>
+
+      <h4 class="step" id="timeofday"><span class="tag">RULE 2.5</span> Time-of-day anomaly</h4>
+      <p>Activity far outside an account's normal hours can signal a compromised account. Each customer
+        profile carries its own active-hours window, so the rule compares against that account's pattern
+        rather than one global schedule — with a buffer hour so ordinary early or late activity isn't flagged.</p>
+      <div class="code">
+        <div class="bar"><span>TimeOfDayAnomalyDetector.detect()</span><button onclick="cp(this)">copy</button></div>
+        <pre><code>start_hour, end_hour = profile.active_hours     <span class="tok-c"># lives on CustomerProfile</span>
+<span class="tok-k">for</span> txn <span class="tok-k">in</span> txns:
+    hour = txn.timestamp.hour
+    outside = hour &lt; (start_hour - self.hour_buffer) \
+           <span class="tok-k">or</span> hour &gt; (end_hour + self.hour_buffer)
+    <span class="tok-k">if</span> outside:
+        profile.update_risk_score(<span class="tok-s">"fraud"</span>, <span class="tok-n">15</span>)
+        alerts.append(self._make_alert(...))</code></pre>
+      </div>
+      <div class="callout"><span class="k">Why active_hours sits on CustomerProfile:</span> traders don't have
+        one — this is the single attribute that justified splitting the profile class into trader and
+        customer subclasses instead of one shared type.</div>
+
+      <h4 class="step" id="amount"><span class="tag">RULE 2.6</span> Amount threshold &amp; structuring</h4>
+      <p>Two patterns in one rule. A single transaction over the large-amount threshold is flagged directly.
+        Separately, several transactions clustered just <em>below</em> that threshold suggest deliberate
+        splitting to stay under a reporting limit — so the rule also scans a band set at 90% of the
+        threshold and flags the group when enough transactions fall inside it.</p>
+      <div class="code">
+        <div class="bar"><span>AmountThresholdRule.detect()</span><button onclick="cp(this)">copy</button></div>
+        <pre><code><span class="tok-c"># 1 — single large transaction</span>
+<span class="tok-k">for</span> txn <span class="tok-k">in</span> txns:
+    <span class="tok-k">if</span> txn.amount &gt;= self.large_amount:
+        profile.update_risk_score(<span class="tok-s">"fraud"</span>, <span class="tok-n">30</span>)
+        alerts.append(self._make_alert(...))
+
+<span class="tok-c"># 2 — structuring: a cluster just under the limit</span>
+near = [t <span class="tok-k">for</span> t <span class="tok-k">in</span> txns
+        <span class="tok-k">if</span> self.structuring_floor &lt;= t.amount &lt; self.large_amount]
+<span class="tok-k">if</span> <span class="tok-f">len</span>(near) &gt;= self.structuring_count:
+    profile.update_risk_score(<span class="tok-s">"fraud"</span>, <span class="tok-n">35</span>)
+    alerts.append(self._make_alert(...))     <span class="tok-c"># one alert for the pattern</span></code></pre>
+      </div>
+      <div class="callout"><span class="k">This is the rule that fires twice</span> in the demo run — once on
+        C31's single $11,200 wire, once on C14's pair of wires in the $8,550–$9,500 band. That's why seven
+        alerts come from six detectors.</div>
+    </section>
+
+    <!-- ══════════════ SECTION 3 : A RUN ══════════════ -->
+    <section id="run">
+      <div class="sec-label">Part 3 · A Run</div>
+      <h2>From data to alerts</h2>
+      <p>The system runs on an annotated synthetic dataset: seven seeded suspicious patterns — one per
+        rule family plus a second amount pattern — and seven deliberately clean entities that each probe
+        a rule's threshold from just below, to measure false positives. Every seeded pattern is labeled
+        with the exact records the alert should cite.</p>
+
+      <table>
+        <thead><tr><th>ID</th><th>Rule</th><th class="mono">Entity</th><th>Paired clean probe (must stay silent)</th></tr></thead>
+        <tbody>
+          <tr><td>P01</td><td>Wash Trade</td><td class="mono">T043</td><td>70% overlap (below 0.8); 130s gap (beyond window)</td></tr>
+          <tr><td>P02</td><td>Front Running</td><td class="mono">T042</td><td>Unrelated symbols</td></tr>
+          <tr><td>P03</td><td>Spoofing</td><td class="mono">T017</td><td>Single ordinary trade</td></tr>
+          <tr><td>P04</td><td>Velocity Burst</td><td class="mono">C09</td><td>Exactly 5 txns (rule needs &gt;5)</td></tr>
+          <tr><td>P05</td><td>Time-of-Day</td><td class="mono">C22</td><td>Daytime, low frequency</td></tr>
+          <tr><td>P06</td><td>Structuring</td><td class="mono">C14</td><td>One in-band wire (needs 2)</td></tr>
+          <tr><td>P07</td><td>Large Amount</td><td class="mono">C31</td><td>$9,400 (below $9,500)</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="output">3.1 · What one run produces</h3>
+      <p>The same run exports three formats for three audiences: a formatted text log for engineers, a
+        JSON manifest for machines, and a plain-language HTML table for compliance readers. Here's the
+        console evaluation from a full run:</p>
+      <div class="term">
+<span class="d"> ============================================================</span>
+<span class="d"> </span>DETECTION QUALITY EVALUATION
+<span class="d"> ------------------------------------------------------------</span>
+  Seeded suspicious patterns : <span class="a">7</span>
+  Detected                   : <span class="g">7</span>
+  Missed                     : <span class="g">0</span>
+  False positives (clean set): <span class="g">0</span>
+  Clean entities probed      : <span class="a">7</span>
+  Alerts by severity         : HIGH <span class="a">5</span>, MED <span class="a">2</span>
+<span class="d"> ------------------------------------------------------------</span>
+  <span class="g">[DETECTED]</span>   P01 Wash Trade                    on T043 → ALT-00001
+  <span class="g">[DETECTED]</span>   P03 Spoofing                      on T017 → ALT-00002
+  <span class="g">[DETECTED]</span>   P02 Front Running                 on T042 → ALT-00003
+  <span class="g">[DETECTED]</span>   P04 Velocity Burst                on C09  → ALT-00004
+  <span class="g">[DETECTED]</span>   P05 Time-of-Day Anomaly           on C22  → ALT-00005
+  <span class="g">[DETECTED]</span>   P06 Amount Threshold / Structuring on C14 → ALT-00006
+  <span class="g">[DETECTED]</span>   P07 Amount Threshold / Structuring on C31 → ALT-00007
+<span class="d"> ============================================================</span>
+      </div>
+
+      <p>And the plain-language view a non-technical reader sees — the same alerts, translated:</p>
+      <table>
+        <thead><tr><th>Priority</th><th>What was flagged</th><th class="mono">Entity</th><th>What it means</th><th>Suggested action</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-high">High</span></td><td>Suspicious self-trading</td><td class="mono">T043</td><td>The same trader bought and sold the same security at nearly the same time and size.</td><td>Refer to a surveillance analyst.</td></tr>
+          <tr><td><span class="badge b-high">High</span></td><td>Possible fake orders</td><td class="mono">T017</td><td>A large order was placed and cancelled within seconds, which can mislead others about supply or demand.</td><td>Review the order and cancellation timing.</td></tr>
+          <tr><td><span class="badge b-med">Medium</span></td><td>Trading ahead of a large order</td><td class="mono">T042</td><td>A trade was placed shortly before a large client order in the same security.</td><td>Confirm the account relationship.</td></tr>
+          <tr><td><span class="badge b-high">High</span></td><td>Unusual transaction frequency</td><td class="mono">C09</td><td>An account made an unusually high number of transactions in a short period.</td><td>Verify activity with the account holder.</td></tr>
+          <tr><td><span class="badge b-med">Medium</span></td><td>Activity at an unusual time</td><td class="mono">C22</td><td>A transaction occurred well outside the account's normal active hours.</td><td>Verify the transaction with the account holder.</td></tr>
+          <tr><td><span class="badge b-high">High</span></td><td>Structured amounts</td><td class="mono">C14</td><td>Several transactions were kept just below a reporting limit — a pattern that can indicate avoidance.</td><td>Review for possible regulatory reporting.</td></tr>
+          <tr><td><span class="badge b-high">High</span></td><td>Large transaction amount</td><td class="mono">C31</td><td>A single transaction exceeded the large-amount threshold.</td><td>Review for possible regulatory reporting.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="quality">3.2 · Why the numbers are provable</h3>
+      <p>Because the data is labeled, detection quality is measured, not asserted: seven patterns seeded,
+        seven detected on rule + entity + evidence, zero alerts on any clean probe. That exactness is the
+        deliberate trade-off of synthetic data — real order-book feeds carry no manipulation labels, so
+        ground truth there would require expert review.</p>
+      <div class="callout"><span class="k">The same detectors, unchanged,</span> also run against real
+        NASDAQ order-book data (LOBSTER) and a published payment simulator (PaySim) — only the loader
+        class changes, never the detection logic. That separation of data from analysis is the whole point
+        of the design.</div>
+
+      <h3 id="live">3.3 · Run it live, right here</h3>
+      <div class="live-tag"><span class="dot"></span> Real Python, executed in your browser</div>
+      <p>Everything above describes the system. This runs it. The project's actual modules —
+        <span class="mono">alert.py</span>, <span class="mono">entity_profile.py</span>,
+        <span class="mono">detection_rules.py</span>, <span class="mono">alert_manager.py</span>,
+        <span class="mono">synthetic_data.py</span> — are compiled to WebAssembly and execute
+        client-side. No server, no pre-computed results: press the button and the real pipeline
+        builds the profiles, dispatches the six detectors, and raises the alerts.</p>
+
+      <div class="runbar">
+        <button class="run" id="runBtn" disabled>Loading Python…</button>
+        <button class="ghost" id="logBtn" disabled>Download log</button>
+        <span class="status" id="status">Booting the runtime (one-time ~10 MB load)…</span>
+      </div>
+
+      <div id="liveResults" class="hidden">
+        <div class="stats" id="statRow"></div>
+        <p id="summaryLine"></p>
+
+        <h4 class="step"><span class="tag">OUTPUT</span> Evaluation console</h4>
+        <div class="term" id="liveTerm"></div>
+
+        <h4 class="step"><span class="tag">CHART</span> Alerts by rule and severity</h4>
+        <div class="chart" id="chart"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--red)"></span> High</span>
+          <span><span class="sw" style="background:var(--amber)"></span> Medium</span>
+        </div>
+
+        <h4 class="step"><span class="tag">ALERTS</span> Plain-language view</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Priority</th><th>What was flagged</th><th class="mono">Entity</th><th>What it means</th><th>Suggested action</th></tr></thead>
+          <tbody id="alertRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════ WRAP ══════════════ -->
+    <section id="stack" style="border-bottom:none;">
+      <div class="sec-label">Wrap-up</div>
+      <h2>Tech &amp; design notes</h2>
+      <table>
+        <thead><tr><th>Concern</th><th>Approach</th></tr></thead>
+        <tbody>
+          <tr><td>Language</td><td class="mono">Python 3.13</td></tr>
+          <tr><td>Core OOP</td><td>Abstract base + 3-level inheritance, polymorphic dispatch, frozen dataclass, custom exceptions</td></tr>
+          <tr><td>Data structures</td><td>deque (sliding window), dict (O(1) entity routing), heapq (severity priority queue), set (dedup)</td></tr>
+          <tr><td>Testing</td><td class="mono">pytest — 44 passing, incl. boundary &amp; regression tests</td></tr>
+          <tr><td>Outputs</td><td>Text log · JSON manifest · plain-language HTML</td></tr>
+          <tr><td>Config</td><td>All thresholds external; every run records its own configuration</td></tr>
+        </tbody>
+      </table>
+      <div class="disclaimer">
+        Every alert shown is an automated indicator requiring human review — not a determination of fraud
+        or manipulation. The system runs on synthetic data built for testing; results demonstrate that the
+        implementation matches its specification and do not estimate real-world performance.
+      </div>
+    </section>
+
+    <footer>
+      CS-625 · Object-Oriented Software · Financial Crime Detection System<br>
+      6 detectors · 44 tests · 3 output formats — built in Python
+    </footer>
+  </main>
+</div>
+
+<script>
+  // copy buttons
+  function cp(btn){
+    const code = btn.closest('.code').querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(()=>{
+      const t = btn.textContent; btn.textContent='copied ✓';
+      setTimeout(()=>btn.textContent=t, 1400);
+    });
+  }
+  // scrollspy for the rail
+  const links = [...document.querySelectorAll('nav.rail a')];
+  const map = new Map(links.map(a=>[a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const a = map.get(e.target.id); if(a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin:'-45% 0px -50% 0px' });
+  document.querySelectorAll('section[id], header[id]').forEach(s=>obs.observe(s));
+</script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script>
+const PY_FILES = {"alert.py": "from dataclasses import dataclass , field          \nfrom datetime import datetime      \nimport itertools       \n\n_id_counter = itertools.count(1)    \n\n@dataclass(frozen=True)   \nclass Alert:\n    rule_name: str   \n    entity_id : str  \n    severity: str \n    message: str \n    evidence: tuple = ()   # tuple , not list = immutable \n    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())\n    alert_id: str= field(default_factory= lambda: f\"ALT-{next(_id_counter):05d}\")\n    \n    \n    def __post_init__(self):\n        object.__setattr__(self, \"severity\", self.severity.upper())\n        object.__setattr__(self, \"evidence\", tuple(self.evidence))\n        \n        \n    ", "exceptions.py": "\n\nclass MissingTimestampError(Exception):\n    \n    pass \n\nclass EmptyProfileError(Exception):\n    \n    pass \n\nclass InvalidThresholdError(Exception):\n    \n    pass       \n\n", "models.py": "\nfrom exceptions import MissingTimestampError\nfrom datetime import datetime\n\nclass Trade:\n    \n    def __init__(self, trade_id, asset_class, symbol, price, volume, trader_id, timestamp, order_type):\n        if timestamp is None:\n            raise MissingTimestampError(f\"Trade {trade_id} is missing a timestamp\")\n        \n        if volume ==0 :\n            raise ValueError(f\"Trade {trade_id} has zero volume and cannot be processed.\")\n        \n        self.trade_id = trade_id \n        self.asset_class = asset_class \n        self.symbol = symbol \n        self.price = float(price)\n        self.volume = int(volume)\n        self.trader_id = trader_id \n        self.timestamp = timestamp if isinstance(timestamp, datetime) else datetime.fromisoformat(timestamp)\n        self.order_type = order_type.upper()\n        \n        \n    def to_dict(self):\n        return {\n            \"trade_id\" : self.trade_id,\n            \"asset_class\": self.asset_class,\n            \"symbol\": self.symbol,\n            \"price\": self.price,\n            \"volume\": self.volume,\n            \"trader_id\": self.trader_id,\n            \"timestamp\": self.timestamp.isoformat(),\n            \"order_type\": self.order_type,    \n        }\n        \n    def time_diff(self, other):\n        return abs((self.timestamp - other.timestamp).total_seconds())\n    \n    def __repr__(self):\n        return f\"Trade({self.trade_id}, {self.asset_class}, {self.symbol}, {self.order_type}, vol={self.volume}, {self.timestamp})\"\n    \n    \nclass Transaction:\n    \n    def __init__(self, txn_id, amount, merchant, customer_id, timestamp, channel):\n        if timestamp is None:\n            raise MissingTimestampError(f\"Transaction {txn_id} is missing a timestamp.\")\n            # raise ValueError(f\"Transaction {txn_id} is missing a timestamp.\")\n        \n        self.txn_id = txn_id \n        self.amount = float(amount)\n        self.merchant = merchant\n        self.customer_id = customer_id \n        self.timestamp = timestamp if isinstance(timestamp, datetime) else datetime.fromisoformat(timestamp)\n        self.channel = channel.lower()\n        \n        \n    def to_dict(self):\n        return {\n            \"txn_id\": self.txn_id,\n            \"amount\": self.amount,\n            \"merchant\": self.merchant,\n            \"customer_id\": self.customer_id,\n            \"timestamp\": self.timestamp.isoformat(),\n            \"channel\": self.channel,\n        }\n        \n    def time_diff(self, other):\n        return abs((self.timestamp - other.timestamp).total_seconds())\n    \n    def __repr__(self):\n        return f\"Transaction({self.txn_id}, ${self.amount}, {self.merchant}, {self.timestamp})\"\n            \n            \n            \n            \n            \n            ", "entity_profile.py": "\nfrom collections import deque\nfrom datetime import timedelta , datetime \nfrom exceptions import EmptyProfileError\n\nclass EntityProfile:\n   \n    def __init__(self, entity_id = str):\n        self.entity_id = entity_id\n        self._history=  deque()\n        self.risk_scores = {\"manipulation\": 0, \"fraud\": 0}\n        \n        \n    # def add_event(self, event):\n    #     self._history.append(event)              # deque used here\n        \n    def add_event(self, event):\n        if self._history and event.timestamp < self._history[-1].timestamp:\n            # Late arrival: insert in timestamp order to preserve the\n            # ordering get_recent's early-exit scan depends on.\n            items = sorted([*self._history, event], key=lambda e: e.timestamp)\n            self._history = deque(items)\n        else:\n            self._history.append(event)\n\n    def get_recent(self, seconds: int) -> list:\n        if not self._history:                    # and here\n            raise EmptyProfileError(\n                f\"No events recorded for entity {self.entity_id}\")\n        cutoff = self._history[-1].timestamp - timedelta(seconds=seconds)\n        recent = []\n        for event in reversed(self._history):    # and here\n            if event.timestamp < cutoff:\n                break\n            recent.append(event)\n        recent.reverse()\n        return recent\n\n    def update_risk_score(self, category, increment):\n        if category in self.risk_scores:\n            self.risk_scores[category] += increment\n\n    def total_risk(self):\n        return sum(self.risk_scores.values())\n\n    def event_count(self) -> int:\n        return len(self._history)\n\n    def __repr__(self):\n        return (f\"{self.__class__.__name__}({self.entity_id}, \"\n                f\"events={self.event_count()}, risk={self.risk_scores})\")\n\n\nclass TraderProfile(EntityProfile):\n    entity_type = \"trader\"\n                   \nclass CustomerProfile(EntityProfile):\n    entity_type = \"customer\"\n    \n    def __init__(self, entity_id:str, active_hours: tuple = (6, 22)):\n        super().__init__(entity_id)\n        self.active_hours = active_hours     # only customers need this  \n        ", "detection_rules.py": "\nfrom abc import ABC , abstractmethod \nfrom entity_profile import TraderProfile, CustomerProfile\nfrom alert import Alert \n\nfrom exceptions import MissingTimestampError, EmptyProfileError ,InvalidThresholdError\n\nclass DetectionRule(ABC):\n    \n    def __init__(self, rule_name, severity, time_window_seconds):\n        if time_window_seconds <= 0:\n            raise InvalidThresholdError(\n                f\"Rule '{rule_name}' has invalid time_window_seconds ={time_window_seconds}.\"\n            )\n            \n        self.rule_name = rule_name\n        self.severity = severity   \n        self.time_window_seconds = time_window_seconds \n        \n    def config(self) -> dict:\n        return {\"rule\": self.rule_name, \"class\": self.__class__.__name__,\n                \"severity\": self.severity,\n                \"time_window_seconds\": self.time_window_seconds}\n        \n    @abstractmethod\n    def detect(self, entity_profile):\n        \n        pass \n    \n    def _make_alert(self, entity_id, description , evidence=None):\n        return Alert(rule_name= self.rule_name,\n             entity_id= entity_id,\n             severity = self.severity,\n             message=description,\n             evidence = evidence or ())    \n        \n    def __repr__(self):\n        return f\"{self.__class__.__name__}(severity={self.severity}, window={self.time_window_seconds}s)\"\n    \n    \nclass MarketRule(DetectionRule, ABC):\n    profile_type = TraderProfile \n    \n    def _get_trades(self, entity_profile):\n        try:\n            return entity_profile.get_recent(self.time_window_seconds)\n        except EmptyProfileError:\n            return []\n    \nclass FraudRule(DetectionRule, ABC):\n    profile_type = CustomerProfile   \n    \n    def _get_transactions(self, entity_profile):\n        try:\n            return entity_profile.get_recent(self.time_window_seconds)\n        except EmptyProfileError:\n            return []         \n        \nclass WashTradeDetector(MarketRule):\n    \n    def __init__(self, time_window_seconds=120, volume_overlap_pct=0.8):\n        super().__init__(\n            rule_name=\"Wash Trade\",\n            severity=\"High\",\n            time_window_seconds=time_window_seconds,\n        )\n        \n        self.volume_overlap_pct = volume_overlap_pct\n        self._flagged_pairs = set() \n        \n    def config(self):\n            return {**super().config(), \"volume_overlap_pct\": self.volume_overlap_pct}\n        \n    def detect(self, entity_profile):\n        trades = self._get_trades(entity_profile)\n        if not trades:\n            return []\n        \n        alerts = [] \n        buys = [t for t in trades if t.order_type == \"BUY\"]\n        sells = [t for t in trades if t.order_type == \"SELL\"]\n        \n        for buy in buys:\n            for sell in sells:\n                pair_id = tuple(sorted([buy.trade_id, sell.trade_id]))\n                if pair_id in self._flagged_pairs:\n                    continue \n                same_symbol = buy.symbol == sell.symbol \n                within_window = buy.time_diff(sell) <= self.time_window_seconds\n                overlap = min(buy.volume, sell.volume) / max(buy.volume, sell.volume)\n                if same_symbol and within_window and overlap >= self.volume_overlap_pct:\n                    self._flagged_pairs.add(pair_id)\n                    entity_profile.update_risk_score(\"manipulation\", 30)\n                    alerts.append(self._make_alert(\n                        entity_id= entity_profile.entity_id,\n                        description=(\n                            f\"Round-trip detected on {buy.symbol}: \"\n                            f\"BUY {buy.volume} @ {buy.price} ({buy.trade_id}) \"\n                            f\"matched SELL {sell.volume} @ {sell.price} ({sell.trade_id}) \"\n                            f\"within {buy.time_diff(sell):.0f}s.\"\n                        ),\n                        evidence= [buy.to_dict(), sell.to_dict()],\n                    ))\n        return alerts\n    \n\nclass SpoofingDetector(MarketRule):\n    \n    def __init__(self, time_window_seconds=300, cancel_window_seconds=10, large_volume=1000):\n        super().__init__(\n            rule_name=\"Spoofing\",\n            severity=\"High\",\n            time_window_seconds=time_window_seconds,\n        )\n        self.cancel_window_seconds = cancel_window_seconds\n        self.large_volume = large_volume \n        \n    def config(self):\n        return {**super().config(),\n                \"cancel_window_seconds\": self.cancel_window_seconds,\n                \"large_volume\": self.large_volume}\n\n        \n    def detect(self, entity_profile):\n        trades = self._get_trades(entity_profile)\n        if not trades:\n            return []\n        \n        alerts = []\n        cancelled = [t for t in trades if t.order_type == \"CANCEL\"]\n        live = [t for t in trades if t.order_type in (\"BUY\", \"SELL\")]\n        \n        for cancel in cancelled:\n            \n            for order in live:\n                if (order.volume >= self.large_volume\n                        and order.symbol == cancel.symbol\n                        and 0 < (cancel.timestamp - order.timestamp).total_seconds() <= self.cancel_window_seconds):\n                    entity_profile.update_risk_score(\"manipulation\", 35)\n                    alerts.append(self._make_alert(\n                        entity_id=entity_profile.entity_id,\n                        description=(\n                            f\"Large {order.order_type} order ({order.volume} {order.symbol} @ {order.price}) \"\n                            f\"cancelled {cancel.time_diff(order):.1f}s after placement ({cancel.trade_id}).\"\n                        ),\n                        evidence=[order.to_dict(), cancel.to_dict()],\n                    ))\n        return alerts\n        \nclass FrontRunningDetector(MarketRule):\n    \n    def __init__(self, time_window_seconds=60, large_client_volume=3000):\n        super().__init__(\n            rule_name=\"Front Running\",\n            severity=\"MED\",\n            time_window_seconds=time_window_seconds,\n        )\n        self.large_client_volume = large_client_volume \n        \n    def config(self):\n            return {**super().config(), \"large_client_volume\": self.large_client_volume}\n        \n    \n    def detect(self, entity_profile):\n        trades = self._get_trades(entity_profile)\n        if not trades:\n            return []\n        \n        alerts = []\n        trader_buys = [t for t in trades if t.order_type == \"BUY\"]\n        client_buys = [t for t in trades if t.order_type == \"CLIENT_BUY\"\n                       and t.volume >= self.large_client_volume]\n        \n        for client in client_buys:\n            for buy in trader_buys:\n                if (buy.symbol == client.symbol\n                    and 0 < (client.timestamp - buy.timestamp).total_seconds() <= self.time_window_seconds):\n                    entity_profile.update_risk_score(\"manipulation\", 25)\n                    alerts.append(self._make_alert(\n                        entity_id=entity_profile.entity_id,\n                        description=(\n                            f\"Trader bought {buy.volume} {buy.symbol} @ {buy.price} ({buy.trade_id}) \"\n                            f\"{buy.time_diff(client):.0f}s before large client BUY of \"\n                            f\"{client.volume} shares ({client.trade_id}).\"\n                        ),\n                        evidence=[buy.to_dict(), client.to_dict()],\n                    ))\n        return alerts\n\n# Level 3: Concrete fraud detection rules\n\nclass VelocityChecker(FraudRule):\n    \n    def __init__(self, time_window_seconds=600, max_transactions=5):\n        super().__init__(\n            rule_name=\"Velocity Burst\",\n            severity=\"High\",\n            time_window_seconds=time_window_seconds,\n        )\n        self.max_transactions = max_transactions\n        \n    def config(self):\n        return {**super().config(), \"max_transactions\": self.max_transactions}\n        \n    \n    def detect(self, entity_profile):\n        txns = self._get_transactions(entity_profile)\n        if not txns:\n            return []\n        \n        if len(txns) > self.max_transactions:\n            entity_profile.update_risk_score(\"fraud\", 25)\n            return [self._make_alert(\n                entity_id=entity_profile.entity_id,\n                description=(\n                    f\"{len(txns)} transactions in {self.time_window_seconds // 60} minutes \"\n                    f\"(threshold: {self.max_transactions}). \"\n                    f\"Merchants: {', '.join(t.merchant for t in txns[:5])}...\"\n                ),\n                evidence=[t.to_dict() for t in txns],\n            )]\n        return []\n    \nclass TimeOfDayAnomalyDetector(FraudRule):\n    def __init__(self, time_window_seconds=86400, hour_buffer=1):\n        super().__init__(\n            rule_name=\"Time-of-Day Anomaly\",\n            severity=\"MED\",\n            time_window_seconds=time_window_seconds,      \n        )\n        self.hour_buffer = hour_buffer \n        \n    def config(self):\n        return {**super().config(), \"hour_buffer\": self.hour_buffer}\n        \n    def detect(self, entity_profile):\n        txns = self._get_transactions(entity_profile)\n        if not txns:\n            return []\n        \n        start_hour, end_hour = entity_profile.active_hours\n        alerts = []\n        for txn in txns:\n            hour = txn.timestamp.hour\n            outside_window = hour < (start_hour - self.hour_buffer) or hour > (end_hour + self.hour_buffer)\n            if outside_window:\n                entity_profile.update_risk_score(\"fraud\", 15)\n                alerts.append(self._make_alert(\n                    entity_id=entity_profile.entity_id,\n                    description=(\n                        f\"Transaction {txn.txn_id} at {txn.timestamp.strftime('%H:%M')} \"\n                        f\"is outside normal active hours ({start_hour}:00-{end_hour}:00). \"\n                        f\"Merchant: {txn.merchant}, amount: ${txn.amount:,.2f}.\"\n                    ),\n                    evidence=[txn.to_dict()],\n                ))\n        return alerts \n    \n    \nclass AmountThresholdRule(FraudRule):\n    \n    def __init__(self, time_window_seconds=3600, large_amount=9500.0, structuring_count=2):\n        super().__init__(\n            rule_name=\"Amount Threshold / Structuring\",\n            severity=\"High\",\n            time_window_seconds= time_window_seconds,           \n        )  \n        self.large_amount = large_amount\n        self.structuring_count = structuring_count\n        self.structuring_floor = large_amount * 0.90   # 90 % threshold \n        \n    def config(self):\n        return {**super().config(), \"large_amount\": self.large_amount,\n                \"structuring_count\": self.structuring_count}\n        \n    def detect(self, entity_profile):\n        txns = self._get_transactions(entity_profile)\n        if not txns:\n            return [] \n        \n        alerts = [] \n        # Large single transaction\n        \n        for txn in txns:\n            if txn.amount >= self.large_amount:\n                entity_profile.update_risk_score(\"fraud\", 30)\n                alerts.append(self._make_alert(\n                    entity_id=entity_profile.entity_id,\n                    description=(\n                        f\"Transaction {txn.txn_id} of ${txn.amount:,.2f} exceeds \"\n                        f\"large-amount threshold of ${self.large_amount:,.2f}.\"\n                    ),\n                    evidence=[txn.to_dict()],\n                ))\n                \n        # Structuring: multiple transactions just below threshold \n        \n        near_threshold = [ t for t in txns if self.structuring_floor <= t.amount < self.large_amount]\n        if len(near_threshold) >= self.structuring_count:\n            entity_profile.update_risk_score(\"fraud\", 35)\n            total = sum(t.amount for t in near_threshold)\n            alerts.append(self._make_alert(\n                entity_id=entity_profile.entity_id,\n                description=(\n                    f\"Structuring pattern: {len(near_threshold)} transactions between \"\n                    f\"${self.structuring_floor:,.2f}-${self.large_amount:,.2f} \"\n                    f\"totalling ${total:,.2f} within {self.time_window_seconds // 60} minutes.\"\n                ),\n                evidence=[t.to_dict() for t in near_threshold],\n            ))\n        return alerts \n    \n    \n        \n    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n                \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n        \n                    \n        \n    \n        \n    ", "alert_manager.py": "\"\"\"\nalert_manager.py\nAlertManager — collects alerts from all detection rules and maintains\nseverity ordering via a heapq priority queue.\nCS625 Final Project V2 — Rohan Kumar\n\"\"\"\n\nimport heapq\nfrom datetime import datetime\n\n\nSEVERITY_WEIGHT = {\"HIGH\": 0, \"MED\": 1, \"LOW\": 2}\n\n\nclass AlertManager:\n    \"\"\"\n    Collects alert dicts from detection rules and stores them in a\n    min-heap keyed on (severity_weight, timestamp_str) so the highest-\n    priority alerts always surface first on retrieval.\n    \"\"\"\n\n    def __init__(self):\n        self._heap = []\n        self._counter = 0   # tiebreaker for equal-priority alerts\n\n    def add_alert(self, alert):\n        weight = SEVERITY_WEIGHT.get(alert.severity, 2)\n        ts = datetime.now().isoformat()\n        entry = (weight, self._counter, ts, alert)\n        heapq.heappush(self._heap, entry)\n        self._counter += 1\n\n    def add_alerts(self, alert_list):\n        for alert in alert_list or []:\n            self.add_alert(alert)\n\n    def get_all(self):\n        \"\"\"Return all alerts sorted highest severity first.\"\"\"\n        return [entry[3] for entry in heapq.nsmallest(len(self._heap), self._heap)]\n\n    def get_top(self, n):\n        \"\"\"Return top-n alerts by severity.\"\"\"\n        return [entry[3] for entry in heapq.nsmallest(n, self._heap)]\n\n    def count(self):\n        return len(self._heap)\n\n    def count_by_severity(self):\n        counts = {\"HIGH\": 0, \"MED\": 0, \"LOW\": 0}\n        for entry in self._heap:\n            sev = entry[3].severity\n            counts[sev] = counts.get(sev, 0) + 1\n        return counts\n\n    def clear(self):\n        self._heap = []\n        self._counter = 0\n", "synthetic_data.py": "\"\"\"\nsynthetic_data.py\nSynthetic Trade and Transaction datasets with annotated ground truth.\nEvery detection rule fires exactly once per seeded pattern, and every\nclean entity probes a specific rule boundary to measure false positives.\nCS625 Final Project V3 — Rohan Kumar\n\"\"\"\n\nfrom models import Trade, Transaction\n\nDATASET_VERSION = \"synthetic-v3.0\"\n\n# ─────────────────────────────────────────────────────────────────────────\n# TRADE DATA\n# Seeded patterns:\n#   P01  T043  wash trading on AAPL   (round-trip 66s apart, 100% overlap)\n#   P02  T042  front-running on MSFT  (prop buy 44s before large client buy)\n#   P03  T017  spoofing on BTC        (large buy cancelled 8s later)\n# Boundary probes (must stay clean):\n#   T099  unrelated trades in different symbols\n#   T055  single ordinary trade\n#   T088  round-trip at 70% volume overlap (< 0.8 threshold)\n#   T091  round-trip 130s apart (> 120s wash-trade window)\n# ─────────────────────────────────────────────────────────────────────────\n\nTRADES = [\n    # P01 — Wash trade: T043 buys then sells AAPL within 66 seconds\n    Trade(\"TR001\", \"Equity\", \"AAPL\", 182.50, 500, \"T043\", \"2025-06-27 08:31:04\", \"BUY\"),\n    Trade(\"TR002\", \"Equity\", \"AAPL\", 182.48, 500, \"T043\", \"2025-06-27 08:32:10\", \"SELL\"),\n\n    # P02 — Front-running: T042 buys MSFT 44s before large client buy (5000 >= 3000)\n    Trade(\"TR003\", \"Equity\", \"MSFT\", 415.20, 1000, \"T042\", \"2025-06-27 08:44:12\", \"BUY\"),\n    Trade(\"TR004\", \"Equity\", \"MSFT\", 415.35, 5000, \"T042\", \"2025-06-27 08:44:56\", \"CLIENT_BUY\"),\n\n    # P03 — Spoofing: T017 places large BTC buy (2000 >= 1000), cancels 8s later (<= 10s)\n    Trade(\"TR005\", \"Crypto\", \"BTC\", 67200.00, 2000, \"T017\", \"2025-06-27 09:02:33\", \"BUY\"),\n    Trade(\"TR006\", \"Crypto\", \"BTC\", 67250.00,   10, \"T017\", \"2025-06-27 09:02:41\", \"CANCEL\"),\n\n    # Clean — T099: unrelated trades, different symbols\n    Trade(\"TR007\", \"Equity\", \"GOOG\", 175.00, 100, \"T099\", \"2025-06-27 10:00:00\", \"BUY\"),\n    Trade(\"TR008\", \"Equity\", \"TSLA\", 248.00, 200, \"T099\", \"2025-06-27 10:15:00\", \"SELL\"),\n\n    # Clean — T055: single ordinary trade\n    Trade(\"TR009\", \"Equity\", \"NVDA\", 890.00, 50, \"T055\", \"2025-06-27 11:00:00\", \"BUY\"),\n\n    # Clean probe — T088: round-trip at 70% volume overlap (700/1000 < 0.8)\n    Trade(\"TR010\", \"Equity\", \"IBM\", 210.00, 1000, \"T088\", \"2025-06-27 12:00:00\", \"BUY\"),\n    Trade(\"TR011\", \"Equity\", \"IBM\", 210.10,  700, \"T088\", \"2025-06-27 12:01:00\", \"SELL\"),\n\n    # Clean probe — T091: round-trip 130s apart (> 120s window)\n    Trade(\"TR012\", \"Equity\", \"AMD\", 155.00, 400, \"T091\", \"2025-06-27 13:00:00\", \"BUY\"),\n    Trade(\"TR013\", \"Equity\", \"AMD\", 154.95, 400, \"T091\", \"2025-06-27 13:02:10\", \"SELL\"),\n]\n\n# ─────────────────────────────────────────────────────────────────────────\n# TRANSACTION DATA\n# Seeded patterns:\n#   P04  C09  velocity burst      (6 txns in ~7 minutes; threshold > 5 in 600s)\n#   P05  C22  time-of-day anomaly (02:45, outside active hours 6–22 with buffer)\n#   P06  C14  structuring         (two wires in the $8,550–$9,500 band, daytime)\n#   P07  C31  large single amount ($11,200 >= $9,500)\n# Boundary probes (must stay clean):\n#   C77  two small transactions hours apart\n#   C88  exactly 5 transactions in the window (rule requires strictly > 5)\n#   C93  single $9,400 wire ($100 below large threshold; alone, below\n#        structuring_count of 2)\n# ─────────────────────────────────────────────────────────────────────────\n\nTRANSACTIONS = [\n    # P04 — Velocity burst: C09, 6 txns 08:02–08:09\n    Transaction(\"TX001\", 45.20, \"Starbucks\", \"C09\", \"2025-06-27 08:02:01\", \"mobile\"),\n    Transaction(\"TX002\", 52.10, \"Amazon\",    \"C09\", \"2025-06-27 08:03:44\", \"online\"),\n    Transaction(\"TX003\", 38.90, \"Uber\",      \"C09\", \"2025-06-27 08:05:12\", \"mobile\"),\n    Transaction(\"TX004\", 61.00, \"Lyft\",      \"C09\", \"2025-06-27 08:06:44\", \"mobile\"),\n    Transaction(\"TX005\", 29.50, \"DoorDash\",  \"C09\", \"2025-06-27 08:07:55\", \"mobile\"),\n    Transaction(\"TX006\", 44.80, \"Walmart\",   \"C09\", \"2025-06-27 08:09:02\", \"mobile\"),\n\n    # P06 — Structuring: C14, two wires in the 90% band, DAYTIME so the\n    # time-of-day rule does not also fire on this entity\n    Transaction(\"TX007\", 9200.00, \"Wire Transfer\", \"C14\", \"2025-06-27 10:14:22\", \"wire\"),\n    Transaction(\"TX008\", 9400.00, \"Wire Transfer\", \"C14\", \"2025-06-27 10:31:05\", \"wire\"),\n\n    # P05 — Time-of-day anomaly: C22 at 02:45 (before 05:00 buffered start)\n    Transaction(\"TX009\", 380.00, \"Casino Online\", \"C22\", \"2025-06-27 02:45:33\", \"online\"),\n\n    # P07 — Large single transaction: C31, $11,200 at 14:22\n    Transaction(\"TX010\", 11200.00, \"International Wire\", \"C31\", \"2025-06-27 14:22:00\", \"wire\"),\n\n    # Clean — C77: two small transactions hours apart\n    Transaction(\"TX011\", 12.50, \"Starbucks\",  \"C77\", \"2025-06-27 09:15:00\", \"mobile\"),\n    Transaction(\"TX012\",  8.90, \"McDonald's\", \"C77\", \"2025-06-27 12:30:00\", \"mobile\"),\n\n    # Clean probe — C88: exactly 5 transactions in 8 minutes (not > 5)\n    Transaction(\"TX013\", 55.00, \"Grocery Store\", \"C88\", \"2025-06-27 11:00:00\", \"debit\"),\n    Transaction(\"TX014\", 23.10, \"Pharmacy\",      \"C88\", \"2025-06-27 11:02:00\", \"debit\"),\n    Transaction(\"TX015\", 17.45, \"Coffee Shop\",   \"C88\", \"2025-06-27 11:04:00\", \"mobile\"),\n    Transaction(\"TX016\", 42.00, \"Gas Station\",   \"C88\", \"2025-06-27 11:06:00\", \"debit\"),\n    Transaction(\"TX017\", 31.75, \"Bookstore\",     \"C88\", \"2025-06-27 11:08:00\", \"mobile\"),\n\n    # Clean probe — C93: single $9,400 wire — inside the structuring band but\n    # alone (below structuring_count 2) and below the $9,500 large threshold\n    Transaction(\"TX018\", 9400.00, \"Wire Transfer\", \"C93\", \"2025-06-27 15:05:00\", \"wire\"),\n]\n\n# ─────────────────────────────────────────────────────────────────────────\n# GROUND TRUTH — what the seeded data is DESIGNED to trigger.\n# pattern_id is the stable identifier; the runtime alert_id assigned by\n# the Alert class is reported next to it by evaluate_detection().\n# ─────────────────────────────────────────────────────────────────────────\n\nEXPECTED_ALERTS = [\n    {\"pattern_id\": \"P01\", \"rule\": \"Wash Trade\",          \"entity_id\": \"T043\",\n     \"evidence_ids\": {\"TR001\", \"TR002\"}},\n    {\"pattern_id\": \"P02\", \"rule\": \"Front Running\",       \"entity_id\": \"T042\",\n     \"evidence_ids\": {\"TR003\", \"TR004\"}},\n    {\"pattern_id\": \"P03\", \"rule\": \"Spoofing\",            \"entity_id\": \"T017\",\n     \"evidence_ids\": {\"TR005\", \"TR006\"}},\n    {\"pattern_id\": \"P04\", \"rule\": \"Velocity Burst\",      \"entity_id\": \"C09\",\n     \"evidence_ids\": {\"TX001\", \"TX002\", \"TX003\", \"TX004\", \"TX005\", \"TX006\"}},\n    {\"pattern_id\": \"P05\", \"rule\": \"Time-of-Day Anomaly\", \"entity_id\": \"C22\",\n     \"evidence_ids\": {\"TX009\"}},\n    {\"pattern_id\": \"P06\", \"rule\": \"Amount Threshold / Structuring\",\n     \"entity_id\": \"C14\", \"evidence_ids\": {\"TX007\", \"TX008\"}},\n    {\"pattern_id\": \"P07\", \"rule\": \"Amount Threshold / Structuring\",\n     \"entity_id\": \"C31\", \"evidence_ids\": {\"TX010\"}},\n]\n\n# Seeded clean on purpose — any alert on these is a false positive.\nCLEAN_ENTITIES = {\n    \"T099\",  # unrelated trades, different symbols\n    \"T055\",  # single ordinary trade\n    \"T088\",  # round-trip at 70% volume overlap (< 0.8 threshold)\n    \"T091\",  # round-trip 130s apart (> 120s wash-trade window)\n    \"C77\",   # two transactions hours apart\n    \"C88\",   # exactly 5 transactions (threshold requires > 5)\n    \"C93\",   # $9,400 alone: below large threshold and structuring count\n}"};
+const DRIVER_CODE = "# driver.py — runs INSIDE Pyodide. Executes the real pipeline and returns JSON to JS.\nimport json, io\nfrom contextlib import redirect_stdout\n\ndef run_pipeline():\n    from synthetic_data import (TRADES, TRANSACTIONS, EXPECTED_ALERTS,\n                                CLEAN_ENTITIES, DATASET_VERSION)\n    from entity_profile import TraderProfile, CustomerProfile\n    from detection_rules import (WashTradeDetector, SpoofingDetector, FrontRunningDetector,\n                                 VelocityChecker, TimeOfDayAnomalyDetector, AmountThresholdRule)\n    from alert_manager import AlertManager\n\n    def build_traders(trades):\n        p = {}\n        for t in trades:\n            p.setdefault(t.trader_id, TraderProfile(t.trader_id)).add_event(t)\n        return p\n    def build_customers(txns):\n        p = {}\n        for t in txns:\n            p.setdefault(t.customer_id, CustomerProfile(t.customer_id)).add_event(t)\n        return p\n\n    profiles = {**build_traders(TRADES), **build_customers(TRANSACTIONS)}\n    rules = [WashTradeDetector(120), SpoofingDetector(300,10,1000),\n             FrontRunningDetector(60,3000), VelocityChecker(600,5),\n             TimeOfDayAnomalyDetector(86400,1), AmountThresholdRule(3600,9500.0,2)]\n\n    mgr = AlertManager()\n    for prof in profiles.values():\n        for r in rules:\n            if isinstance(prof, r.profile_type):\n                mgr.add_alerts(r.detect(prof))\n\n    alerts = mgr.get_all()\n    counts = mgr.count_by_severity()\n\n    def ev_ids(a):\n        return {rec.get(\"trade_id\") or rec.get(\"txn_id\") for rec in a.evidence}\n\n    detected = []\n    for exp in EXPECTED_ALERTS:\n        hit = next((a for a in alerts\n                    if a.rule_name == exp[\"rule\"] and a.entity_id == exp[\"entity_id\"]\n                    and exp[\"evidence_ids\"] <= ev_ids(a)), None)\n        detected.append({\"pattern_id\": exp[\"pattern_id\"], \"rule\": exp[\"rule\"],\n                         \"entity_id\": exp[\"entity_id\"],\n                         \"alert_id\": hit.alert_id if hit else None})\n    false_pos = [a.entity_id for a in alerts if a.entity_id in CLEAN_ENTITIES]\n\n    # Plain-language map\n    PLAIN = {\n      \"Wash Trade\": (\"Suspicious self-trading\",\"The same trader bought and sold the same security at nearly the same time and size.\",\"Refer to a surveillance analyst.\"),\n      \"Spoofing\": (\"Possible fake orders\",\"A large order was placed and cancelled within seconds, which can mislead others about supply or demand.\",\"Review the order and cancellation timing.\"),\n      \"Front Running\": (\"Trading ahead of a large order\",\"A trade was placed shortly before a large client order in the same security.\",\"Confirm the account relationship.\"),\n      \"Velocity Burst\": (\"Unusual transaction frequency\",\"An account made an unusually high number of transactions in a short period.\",\"Verify activity with the account holder.\"),\n      \"Time-of-Day Anomaly\": (\"Activity at an unusual time\",\"A transaction occurred well outside the account's normal active hours.\",\"Verify the transaction with the account holder.\"),\n      \"Amount Threshold / Structuring\": (\"Large or structured amounts\",\"A single large transaction, or several kept just below a reporting limit.\",\"Review for possible regulatory reporting.\"),\n    }\n\n    alert_rows = []\n    for a in alerts:\n        title, meaning, action = PLAIN.get(a.rule_name, (a.rule_name,\"Flagged by a rule.\",\"Review.\"))\n        alert_rows.append({\n            \"alert_id\": a.alert_id, \"rule\": a.rule_name, \"entity_id\": a.entity_id,\n            \"severity\": a.severity, \"message\": a.message,\n            \"evidence_count\": len(a.evidence),\n            \"title\": title, \"meaning\": meaning, \"action\": action,\n        })\n\n    # Build the exported log text using the same content the real report writes\n    log_lines = []\n    DIV = \"=\"*60\n    log_lines += [DIV, \"FINANCIAL CRIME DETECTION SYSTEM — FULL ALERT LOG\", DIV,\n                  \"RUN CONFIGURATION\",\n                  f\"  Dataset      : {DATASET_VERSION}\",\n                  \"  Severity     : HIGH=0, MED=1, LOW=2 (min-heap)\",\n                  \"  Tie-breaking : insertion order via monotonic counter\"]\n    for r in rules:\n        cfg = r.config()\n        params = \", \".join(f\"{k}={v}\" for k,v in cfg.items() if k not in (\"rule\",\"class\"))\n        log_lines.append(f\"  Rule enabled : {cfg['rule']} ({cfg['class']}) — {params}\")\n    log_lines += [DIV, f\"Total alerts: {mgr.count()}\",\n                  f\"HIGH: {counts['HIGH']}  MED: {counts['MED']}  LOW: {counts['LOW']}\", DIV]\n    for i, a in enumerate(alerts, 1):\n        log_lines.append(f\"\\nAlert #{i} | {a.alert_id} | {a.severity} | {a.rule_name}\")\n        log_lines.append(f\"Entity   : {a.entity_id}\")\n        log_lines.append(f\"Details  : {a.message}\")\n        for rec in a.evidence:\n            log_lines.append(f\"  Evidence: {rec}\")\n    log_text = \"\\n\".join(log_lines)\n\n    by_rule = {}\n    for a in alerts:\n        by_rule[a.rule_name] = by_rule.get(a.rule_name, 0) + 1\n\n    return json.dumps({\n        \"dataset\": DATASET_VERSION,\n        \"trades\": len(TRADES), \"transactions\": len(TRANSACTIONS),\n        \"profiles\": len(profiles),\n        \"total\": mgr.count(), \"by_severity\": counts, \"by_rule\": by_rule,\n        \"seeded\": len(EXPECTED_ALERTS), \"detected\": sum(1 for d in detected if d[\"alert_id\"]),\n        \"false_positives\": len(false_pos),\n        \"detected_rows\": detected, \"alerts\": alert_rows,\n        \"log_text\": log_text,\n    })\n\nrun_pipeline()\n";
+</script>
+<script>let pyodide, LOG_TEXT = "";
+const $ = id => document.getElementById(id);
+
+async function bootPy(){
+  try{
+    pyodide = await loadPyodide();
+    for(const [name, content] of Object.entries(PY_FILES)){
+      pyodide.FS.writeFile(name, content);
+    }
+    $("status").textContent = "Runtime ready — press Run detection.";
+    const b = $("runBtn"); b.disabled = false; b.textContent = "\u25B6  Run detection";
+  }catch(e){
+    $("status").textContent = "Couldn't load the Python runtime. Check your connection and reload.";
+    console.error(e);
+  }
+}
+
+function typeInto(el, html){
+  const plain = html.replace(/<[^>]+>/g, "");
+  let i = 0;
+  const step = Math.max(4, Math.ceil(plain.length / 70));
+  const iv = setInterval(() => {
+    el.textContent = plain.slice(0, i);
+    i += step;
+    if(i >= plain.length){ clearInterval(iv); el.innerHTML = html; }
+  }, 18);
+}
+
+async function runDetection(){
+  const b = $("runBtn");
+  b.disabled = true; b.textContent = "Running\u2026";
+  $("status").textContent = "Executing the detection pipeline\u2026";
+  let data;
+  try{
+    const out = await pyodide.runPythonAsync(DRIVER_CODE);
+    data = JSON.parse(out);
+  }catch(e){
+    $("status").textContent = "Run failed: " + e;
+    b.disabled = false; b.textContent = "\u25B6  Run detection";
+    console.error(e); return;
+  }
+  LOG_TEXT = data.log_text;
+  $("liveResults").classList.remove("hidden");
+
+  $("statRow").innerHTML =
+    '<div class="stat"><div class="n">' + data.seeded + '</div><div class="l">Seeded patterns</div></div>' +
+    '<div class="stat"><div class="n">' + data.detected + '</div><div class="l">Detected</div></div>' +
+    '<div class="stat"><div class="n">' + data.false_positives + '</div><div class="l">False positives</div></div>' +
+    '<div class="stat"><div class="n">' + data.by_severity.HIGH + '</div><div class="l">High severity</div></div>' +
+    '<div class="stat"><div class="n">' + data.by_severity.MED + '</div><div class="l">Medium severity</div></div>';
+
+  $("summaryLine").innerHTML = "Scanned <strong>" + data.trades + "</strong> trades and <strong>" +
+    data.transactions + "</strong> transactions across <strong>" + data.profiles +
+    "</strong> entity profiles, detecting <strong>" + data.detected + " of " + data.seeded +
+    "</strong> seeded patterns with <strong>" + data.false_positives +
+    "</strong> false positives on the clean-entity probes.";
+
+  const lines = data.detected_rows.map(d =>
+    '  <span class="g">[DETECTED]</span>   ' + d.pattern_id + ' ' +
+    d.rule.padEnd(32) + ' on ' + d.entity_id.padEnd(5) + ' \u2192 ' + d.alert_id
+  ).join("\n");
+  const bar = "=".repeat(56), thin = "-".repeat(56);
+  typeInto($("liveTerm"),
+    '<span class="d"> ' + bar + '</span>\n DETECTION QUALITY EVALUATION\n<span class="d"> ' + thin + '</span>\n' +
+    '  Seeded suspicious patterns : <span class="a">' + data.seeded + '</span>\n' +
+    '  Detected                   : <span class="g">' + data.detected + '</span>\n' +
+    '  Missed                     : <span class="g">' + (data.seeded - data.detected) + '</span>\n' +
+    '  False positives (clean set): <span class="g">' + data.false_positives + '</span>\n' +
+    '  Alerts by severity         : HIGH <span class="a">' + data.by_severity.HIGH +
+    '</span>, MED <span class="a">' + data.by_severity.MED + '</span>\n' +
+    '<span class="d"> ' + thin + '</span>\n' + lines + '\n<span class="d"> ' + bar + '</span>');
+
+  const order = ["Wash Trade","Spoofing","Front Running","Velocity Burst","Time-of-Day Anomaly","Amount Threshold / Structuring"];
+  const sevOf = {"Wash Trade":"HIGH","Spoofing":"HIGH","Front Running":"MED","Velocity Burst":"HIGH","Time-of-Day Anomaly":"MED","Amount Threshold / Structuring":"HIGH"};
+  const short = {"Wash Trade":"Wash","Spoofing":"Spoof","Front Running":"Front-run","Velocity Burst":"Velocity","Time-of-Day Anomaly":"Time-of-day","Amount Threshold / Structuring":"Amount"};
+  const maxV = Math.max.apply(null, Object.values(data.by_rule).concat([1]));
+  $("chart").innerHTML = order.map(function(rule){
+    const v = data.by_rule[rule] || 0;
+    const col = sevOf[rule] === "HIGH" ? "var(--red)" : "var(--amber)";
+    return '<div class="bar-col"><div class="bar-val">' + v + '</div>' +
+           '<div class="bar-stack" data-h="' + ((v/maxV)*100) + '" style="height:0%;background:' + col + '"></div>' +
+           '<div class="bar-label">' + short[rule] + '</div></div>';
+  }).join("");
+  setTimeout(function(){
+    document.querySelectorAll("#chart .bar-stack").forEach(function(el){
+      el.style.height = el.getAttribute("data-h") + "%";
+    });
+  }, 120);
+
+  const cls = s => s === "HIGH" ? "b-high" : (s === "MED" ? "b-med" : "b-low");
+  const lab = s => s === "HIGH" ? "High" : (s === "MED" ? "Medium" : "Low");
+  $("alertRows").innerHTML = data.alerts.map(function(a){
+    return '<tr><td class="mono">' + a.alert_id + '</td>' +
+      '<td><span class="badge ' + cls(a.severity) + '">' + lab(a.severity) + '</span></td>' +
+      '<td><strong style="color:var(--ink)">' + a.title + '</strong></td>' +
+      '<td class="mono">' + a.entity_id + '</td>' +
+      '<td>' + a.meaning + '</td><td>' + a.action + '</td></tr>';
+  }).join("");
+
+  $("status").textContent = "Done \u2014 " + data.total + " alerts raised.";
+  $("logBtn").disabled = false;
+  b.disabled = false; b.textContent = "\u25B6  Run again";
+}
+
+$("logBtn").addEventListener("click", function(){
+  const blob = new Blob([LOG_TEXT], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "alert_log.txt"; a.click();
+  URL.revokeObjectURL(url);
+});
+$("runBtn").addEventListener("click", runDetection);
+bootPy();
+</script>
+</body>
+</html>
