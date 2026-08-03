@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="w-full border-b border-gray-800 mb-10">
       <div className="max-w-5xl mx-auto flex justify-between items-center py-4 text-sm text-gray-300">
         <Link href="/" className="font-semibold text-white hover:text-blue-400 transition">
-          Rohan Kumar
+          Kumar Rohan
         </Link>
 
         <div className="flex flex-wrap gap-5">
