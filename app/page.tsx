@@ -49,7 +49,7 @@ export default function Home() {
           Risk Analytics • Trade Surveillance • AI Governance
         </p>
 
-        <h1 className="text-5xl md:text-6xl font-bold mb-5">Rohan Kumar</h1>
+        <h1 className="text-5xl md:text-6xl font-bold mb-5">Kumar Rohan</h1>
 
         <p className="text-xl text-gray-300 max-w-3xl mb-8">
           I build data-driven risk, compliance, and governance solutions for
